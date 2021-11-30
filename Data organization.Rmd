@@ -1,0 +1,52 @@
+---
+title: "Organizing the data"
+author: "Caroline & Julia"
+date: "11/30/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+#load packages
+pacman::p_load(haven, readxl, tidyverse, lubridate, readr, dplyr, knitr, rvest, tibble, broom, ggplot2, naniar)
+
+```
+
+
+```{r}
+#1. Enrollment Data
+enrollment_df <- read_excel("countries-enrollment-data-uis-sep-21.xlsx")
+
+#2. Covid19 Schools' Closure  information since Febraury 2020
+school_closure_data_df <- read_csv("covid_impact_education.csv")
+
+#3. Covid-19 School Reopening Survey 
+COVID_SchoolSurvey_df <- read_excel("COVID_SchoolSurvey_R2_Data-and-Codebook.xlsx", 1)
+
+#4. Internet access
+#4.1 Total
+Total_School_connectivity_df <- read_excel("School-Age-Digital-Connectivity.xlsx", 2)
+
+#4.2 Pre-Primary
+preprimary_cconnectivity_df <- read_excel("School-Age-Digital-Connectivity.xlsx", 3)
+
+#4.3 Primary
+primary_connectivity_df <- read_excel("School-Age-Digital-Connectivity.xlsx", 4)
+
+#4.4 Lower Secundary
+lower_secondary_connectivity_df <- read_excel("School-Age-Digital-Connectivity.xlsx", 5)
+
+#4.5 Upper Secundary
+upper_secondary_connectivity_df <- read_excel("School-Age-Digital-Connectivity.xlsx", 6)
+
+#5. Teachers' vaccinaton data
+teacher_vac_df <- read_excel("covid-19-teacher-vaccination.xlsx", 1)
+
+
+
+```
+
