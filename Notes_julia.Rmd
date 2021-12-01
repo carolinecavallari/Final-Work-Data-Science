@@ -1,0 +1,71 @@
+
+Final Data Analysis Project idea submission form: https://docs.google.com/forms/d/e/1FAIpQLSe_6DpDQiJl6cGhq7SQ5J9WmpfP2pn5mexBeHioOKBSvUH5Pw/viewform
+
+***Thoughts on dashboard design***
+https://raw.githack.com/intro-to-data-science-21/lectures/main/11-communication/11-communication.html#43
+Slide 26: 
++ Accessibility via web browser
++ Featuring of interactives
++ Heavy focus on comparative visualization
++ Provision of trends on key performance indicators (KPIs)
+
+Slide 36: 
+1. Are you tackling a monitoring task that needs your data/metrics to be updated frequently?
+2. Who will use the dashboard and to what end? What questions will they use it to answer? What actions will they take in response to these answers?
+3. What specific information should be displayed, and is it meaningful without much context?
+4. What could lead to the metrics being wrong/misleading?
+
+Simon's fav covid dashboard: https://www.zeit.de/wissen/corona-karte-deutschland-aktuelle-zahlen-landkreise?utm_referrer=https%3A%2F%2Fraw.githack.com%2F
+
+Stephen Few on dashboard design: http://perceptualedge.com/articles/Whitepapers/Dashboard_Design.pdf
++ The amount of information that it displays in not overwhelming.
++ Each item of information is displayed in a way that can be quickly examined to assess performance, both in terms of an appropriate graphical medium and direct measure of performance (for example, percentage of target).
++ Measures have been expressed with enough context (for example, comparisons to targets, averages, and previous periods) for their meanings to be clear.
++ Because color is used so sparingly, it is easy to spot those items that require attention by scanning for red.
++ The most important items have been placed in the prominent position of the screen—the upper left.
++ Although the dashboard alerts the person using it to problems, it does not automate a response, but requires human intelligence to be engaged in the process and initiate responses.
++ Responses can be made easily, such as by clicking on the name of a telesales representative who is performing poorly to send an instant message.
++ Because the information is being updated every few seconds, when a close examination is desired, updates can be temporarily halted to remove the distraction of changing data. If updates remain frozen for too long, however, the Unfreeze Data button changes color and eventually begins to flash as a reminder.
++ Only what is necessary appears on the dashboard. It is not cluttered or distractingly decorated. Even instructions for how to use it have been inconspicuously positioned (such as the legend in the lower right corner) or placed on a separate page that can be accessed by pressing the Help button.
+
+My thoughts: 
++ Show both absolute + relative values, rate of change over time
++ Lists should be sortable by multiple variables (ascending/descending) and searchable (e.g. by country name)
++ Maps should be detailed enough to act on the information
++ Key metrics should either be explained or abundantly clear from what is given
++ Define a vulnerability index
+
+***Tools***
+Shiny Dashboard documentation: https://rstudio.github.io/shinydashboard/
+
+***Datasets we have***
++ School closures by country
++ Teacher vaccination rates
++ Digital connectivity of schools
++ Number of children enrolled in schools
++ Health/mental health metrics?
++ Lockdowns by country
++ Income/vulnerability index
+
+***KPIS***
+1. Cumulative days of school closures/partial closures, consecutive closures, frequency of closures, virtual/in-person learning
+2. Student enrollments/drop-out rates
+2. Teacher vaccination rates - by % and by prioritization level
+3. Digital connectivity of schools (with nuance)
+4. Health/mental health of students
+
+Next steps - 26/11
+1. Load and experiment with a few datasets, create some plots
+2. Go through the shiny dashboard tutorial (https://rstudio.github.io/shinydashboard/) and try to add a few plots
+3. Submit our topic idea - DONE
+
+Submission: 
+We're interested in displaying key metrics around school closures, which have adverse impacts on children globally. For our main indicators: we're hoping to capture the inequality in educational access due to prolonged school closures (measured in cumulative days closed), inequalities in technology access, and disparities in teacher vaccination rates. The datasets we're looking at include UNESCO's Global School Closures COVID-19 (https://datasetguide.com/dataset/69b5ff1e92b970013e3d81f375ee7e6c/) and UNESCO/UNICEF/World bank dataset on teacher vaccination rates. We also have an UNESCO dataset school access to digital technology. 
+With these three indicators, combined with income data, we're hoping to construct a vulnerability index for learning inequalities globally. 
+Our audience would likely be an international NGO focused on education inequality and children's welfare, in the hope of providing researchers and philathropists evidence supporting targeted interventions to support educational policies. 
+
+
+
+
+
+
