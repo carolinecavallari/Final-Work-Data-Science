@@ -5,32 +5,22 @@ install.packages("shinydashboard")
 library(shinydashboard)
 library(shiny)
 
-ui <- dashboardPage(
-  dashboardHeader(title = "Basic dashboard"),
-  dashboardSidebar(),
-  dashboardBody(
-    # Boxes need to be put in a row (or column)
-    fluidRow(
-      box(plotOutput("plot1", height = 250)),
-
-      box(
-        title = "Controls",
-        sliderInput("slider", "Number of observations:", 1, 100, 50)
-      )
-    )
-  )
-)
-
+ui <- fluidPage(
+  titlePanel("Basic dashboard"),
+  sidebarLayout(
+    sidebarPanel("sidebar panel"),
+    mainPanel("main panel")
+  ))
 
 
 server <- function(input, output) {
-  set.seed(122)
-  histdata <- rnorm(500)
-
-  output$plot1 <- renderPlot({
-    data <- histdata[seq_len(input$slider)]
-    hist(data)
-  })
+  # set.seed(122)
+  # histdata <- rnorm(500)
+  # 
+  # output$plot1 <- renderPlot({
+  #   data <- histdata[seq_len(input$slider)]
+  #   hist(data)
+  # })
 }
 
 shinyApp(ui, server)
@@ -41,11 +31,24 @@ shinyApp(ui, server)
 ```{r}
 library(tidyverse)
 library(readr)
+library(lubridate)
 closures_df <- read_csv("covid_impact_education.csv")
 
 view(closures_df)
 
-x <- c(1, 2, 3)
+# Creating a month_year column
+sf <- stamp("02-2019", orders = "my") 
+
+closures_df$Date <- lubridate::dmy(closures_df$Date)
+
+closures_df <- closures_df %>%
+  mutate(month_year = sf(Date))
+
+
+is.factor(closures_df$Status)
+table(closures_df$Status)
+closures_df$Status <- factor(closures_df$Status, levels = c("Closed due to COVID-19 ", "Partially open", "Fully open", "Academic break"))
+
 
 ```
 
@@ -54,5 +57,36 @@ x <- c(1, 2, 3)
 library(ggplot2)
 library(ggpubr)
 library(plotly)
+
+# light grey boundaries
+l <- list(color = toRGB("grey"), width = 0.5)
+
+# specify map projection/options
+g <- list(
+  showframe = FALSE,
+  showcoastlines = FALSE,
+  projection = list(type = 'Mercator')
+)
+
+closures_test <- closures_df %>%
+  dplyr::filter(month_year == "01-2021")
+
+fig <- plot_geo(closures_df)
+
+fig <- plot_ly(closures_test, type='choropleth', locations=closures_test$ISO, z=closures_test$Status, text=closures_test$Country)
+
+fig
+fig <- fig %>% add_trace(
+    z = ~Status, color = ~Status, 
+    text = ~Country, locations = ~ISO, marker = list(line = l)
+  )
+
+fig <- fig %>% colorbar(title = 'GDP Billions US$', tickprefix = '$')
+fig <- fig %>% layout(
+    title = '2014 Global GDP<br>Source:<a href="https://www.cia.gov/library/publications/the-world-factbook/fields/2195.html">CIA World Factbook</a>',
+    geo = g
+  )
+
+
 
 ```
