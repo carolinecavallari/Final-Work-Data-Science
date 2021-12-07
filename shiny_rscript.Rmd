@@ -14,7 +14,7 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       helpText("sidebar panel"),
-      
+  
       selectInput("month_select", label = "Select the Month",
           choices = c("02-2020","03-2020","04-2020",
                       "05-2020","06-2020","07-2020",
@@ -24,10 +24,13 @@ ui <- fluidPage(
                       "05-2021","06-2021","07-2021",
                       "08-2021","09-2021","10-2021",
                       "11-2021"),
-          selected = "02-2020"),
+          selected = "11-2021"),
+      
+      ## insert another widget here,
     ),
     mainPanel(
       plotlyOutput("fig", width = "100%")
+      # insert another Output here
       )
   ))
 
