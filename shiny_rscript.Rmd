@@ -1,4 +1,4 @@
-install.packages("shinydashboard")
+
 
 ##Defining shiny dashboard components and publishing
 ```{r}
@@ -6,7 +6,7 @@ library(shinydashboard)
 library(shiny)
 
 ui <- fluidPage(
-  titlePanel("COVID School Closures Dashboard"),
+  titlePanel("COVID-19 School Closures Dashboard"),
   # fluidRow(
   #   column(3,
   #   )
@@ -26,21 +26,29 @@ ui <- fluidPage(
                       "11-2021"),
           selected = "02-2020"),
     ),
-    mainPanel(plotlyOutput("fig"))
+    mainPanel(
+      plotlyOutput("fig", width = "100%")
+      )
   ))
 
-
+Z_Breaks = function(n){
+CUTS = seq(0,1,length.out=n+1)
+rep(CUTS,ifelse(CUTS %in% 0:1,1,2))
+}
 
 server <- function(input, output) {
   output$fig <- renderPlotly({
    
   filteredData <- filter(closures_df, month_year == input$month_select)
   
+  colorScale <- data.frame(z=Z_Breaks(nfactor),
+        col=rep(foo,each=2),stringsAsFactors=FALSE)
+  
   fig <- plot_ly(filteredData, 
          type='choropleth', 
          locations= ~ISO, 
-         z=closures_test$test, 
-         text=closures_test$Country,
+         z=filteredData$test, 
+         text=filteredData$Country,
          colorscale=colorScale,
   colorbar=list(tickvals=1:nfactor, ticktext=names(foo))
   )
@@ -48,6 +56,7 @@ server <- function(input, output) {
   fig
    })
 }
+
 
 shinyApp(ui, server)
 
@@ -60,8 +69,6 @@ library(readr)
 library(lubridate)
 library(RColorBrewer)
 closures_df <- read_csv("covid_impact_education.csv")
-
-view(closures_df)
 
 # Creating a month_year column
 sf <- stamp("02-2019", orders = "my") 
@@ -93,60 +100,6 @@ total_month_year <- closures_df %>%
 library(ggplot2)
 library(ggpubr)
 library(plotly)
-library("devtools")
-
-install_github("ropensci/plotly")
-
-py <- plotly(username="rAPI", key="yu680v5eii", base_url="https://plot.ly")
-
-source("plotlyGraphWidget.R")
-
-
-#Output Graph Function
-graphOutput <- function(inputId, width="100%", height="550px") {
-    tagList(
-        singleton(tags$head(
-            tags$script(src="plotlyGraphWidget.js")
-        )),
-       tags$iframe(id=inputId, src="https://plot.ly/~playground/7.embed",
-       class="graphs", style="border:none;", seamless=TRUE, width=width, height=height)
-    )
-}
-
-renderGraph <- function(expr, env=parent.frame(), quoted=FALSE) {
-    ## This gets called when inputs change --
-    ## Place data wrangling code in here
-    ## and pass the result to the client
-    ## to be graphed.
-
-
-	installExprFunction(expr, "func", env, quoted)
-
-    function(){
-        data = func();
-        ## data is the state of the widgets: see server.R
-        ## this function returns a list of named lists that descripe
-        ## valid postMessage commands to be sent to the embedded iframe.
-        ## see binding.renderValue for the receiving JS side of this function
-        ## and https://github.com/plotly/Embed-API for more about the postMessage
-        ## graph messages
-        return(data)
-
-    }
-}
-
-# # light grey boundaries
-# l <- list(color = toRGB("grey"), width = 0.5)
-# 
-# # specify map projection/options
-# g <- list(
-#   showframe = FALSE,
-#   showcoastlines = FALSE,
-#   projection = list(type = 'Mercator')
-# )
-
-closures_test <- closures_df %>%
-  dplyr::filter(month_year == "11-2020")
 
 Z_Breaks = function(n){
 CUTS = seq(0,1,length.out=n+1)
@@ -157,7 +110,7 @@ colorScale <- data.frame(z=Z_Breaks(nfactor),
         col=rep(foo,each=2),stringsAsFactors=FALSE)
 
 
-fig <- plot_ly(closures_test, 
+fig <- plot_ly(*INSERTDF*, 
                type='choropleth', 
                locations= ~ISO, 
                z=closures_test$test, 
