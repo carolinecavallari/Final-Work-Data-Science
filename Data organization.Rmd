@@ -22,7 +22,10 @@ pacman::p_load(haven, readxl, tidyverse, lubridate, readr, dplyr, knitr, rvest, 
 enrollment_df <- read_excel("countries-enrollment-data-uis-sep-21.xlsx")
 
 #2. Covid19 Schools' Closure  information since Febraury 2020
-school_closure_data_df <- read_csv("covid_impact_education.csv")
+closures_df <- read_csv("covid_impact_education.csv")
+
+#2.a Cumulative Schools Closure data
+
 
 #3. Covid-19 School Reopening Survey 
 COVID_SchoolSurvey_df <- read_excel("COVID_SchoolSurvey_R2_Data-and-Codebook.xlsx", 1)
