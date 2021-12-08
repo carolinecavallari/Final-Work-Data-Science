@@ -6,7 +6,15 @@ library(shinydashboard)
 library(shiny)
 
 ui <- fluidPage(
+<<<<<<< HEAD
   titlePanel("Basic dashboard"),
+=======
+  titlePanel("COVID School Closures Dashboard"),
+  # fluidRow(
+  #   column(3,
+  #   )
+  #   ),
+>>>>>>> parent of b72d40f... shiny updates
   sidebarLayout(
 <<<<<<< HEAD
     sidebarPanel("sidebar panel"),
@@ -26,6 +34,7 @@ ui <- fluidPage(
                       "11-2021"),
           selected = "02-2020"),
     ),
+<<<<<<< HEAD
     mainPanel(
       plotlyOutput("fig", width = "100%")
       )
@@ -41,6 +50,29 @@ server <- function(input, output) {
   #   data <- histdata[seq_len(input$slider)]
   #   hist(data)
   # })
+=======
+    mainPanel(plotlyOutput("fig"))
+  ))
+
+
+
+server <- function(input, output) {
+  output$fig <- renderPlotly({
+   
+  filteredData <- filter(closures_df, month_year == input$month_select)
+  
+  fig <- plot_ly(filteredData, 
+         type='choropleth', 
+         locations= ~ISO, 
+         z=closures_test$test, 
+         text=closures_test$Country,
+         colorscale=colorScale,
+  colorbar=list(tickvals=1:nfactor, ticktext=names(foo))
+  )
+  
+  fig
+   })
+>>>>>>> parent of b72d40f... shiny updates
 }
 
 shinyApp(ui, server)
@@ -81,15 +113,79 @@ closures_df$Status <- factor(closures_df$Status, levels = c("Closed due to COVID
 library(ggplot2)
 library(ggpubr)
 library(plotly)
+library("devtools")
+
+install_github("ropensci/plotly")
+
+py <- plotly(username="rAPI", key="yu680v5eii", base_url="https://plot.ly")
+
+source("plotlyGraphWidget.R")
+
+
+#Output Graph Function
+graphOutput <- function(inputId, width="100%", height="550px") {
+    tagList(
+        singleton(tags$head(
+            tags$script(src="plotlyGraphWidget.js")
+        )),
+       tags$iframe(id=inputId, src="https://plot.ly/~playground/7.embed",
+       class="graphs", style="border:none;", seamless=TRUE, width=width, height=height)
+    )
+}
+
+renderGraph <- function(expr, env=parent.frame(), quoted=FALSE) {
+    ## This gets called when inputs change --
+    ## Place data wrangling code in here
+    ## and pass the result to the client
+    ## to be graphed.
+
+
+	installExprFunction(expr, "func", env, quoted)
+
+    function(){
+        data = func();
+        ## data is the state of the widgets: see server.R
+        ## this function returns a list of named lists that descripe
+        ## valid postMessage commands to be sent to the embedded iframe.
+        ## see binding.renderValue for the receiving JS side of this function
+        ## and https://github.com/plotly/Embed-API for more about the postMessage
+        ## graph messages
+        return(data)
+
+    }
+}
+
+# # light grey boundaries
+# l <- list(color = toRGB("grey"), width = 0.5)
+# 
+# # specify map projection/options
+# g <- list(
+#   showframe = FALSE,
+#   showcoastlines = FALSE,
+#   projection = list(type = 'Mercator')
+# )
+
+closures_test <- closures_df %>%
+  dplyr::filter(month_year == "11-2020")
 
 # light grey boundaries
 l <- list(color = toRGB("grey"), width = 0.5)
 
+<<<<<<< HEAD
 # specify map projection/options
 g <- list(
   showframe = FALSE,
   showcoastlines = FALSE,
   projection = list(type = 'Mercator')
+=======
+fig <- plot_ly(closures_test, 
+               type='choropleth', 
+               locations= ~ISO, 
+               z=closures_test$test, 
+               text=closures_test$Country,
+               colorscale=colorScale,
+  colorbar=list(tickvals=1:nfactor, ticktext=names(foo))
+>>>>>>> parent of b72d40f... shiny updates
 )
 
 closures_test <- closures_df %>%

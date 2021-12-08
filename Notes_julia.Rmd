@@ -54,11 +54,6 @@ Shiny Dashboard documentation: https://rstudio.github.io/shinydashboard/
 3. Digital connectivity of schools (with nuance)
 4. Health/mental health of students
 
-***Plots we're interested in***
-1. School closures by country over time (plotly map, select month-year)
-2. Cumulative days of closures x % of digitization, grouped by teacher vaccination prioritization (scatterplot, colors by vaxx priority)
-3. (Optional) % of students out of school by country
-
 Next steps - 26/11
 1. Load and experiment with a few datasets, create some plots
 2. Go through the shiny dashboard tutorial (https://rstudio.github.io/shinydashboard/) and try to add a few plots
