@@ -25,14 +25,14 @@ enrollment_df <- read_excel("countries-enrollment-data-uis-sep-21.xlsx")
 closures_df <- read_csv("covid_impact_education.csv")
 
 #2.a Cumulative Schools Closure data
-
+cumulative_closure_df <- read_excel("School-Closures-Database-Final-1.xlsx", 2)
 
 #3. Covid-19 School Reopening Survey 
-COVID_SchoolSurvey_df <- read_excel("COVID_SchoolSurvey_R2_Data-and-Codebook.xlsx", 1)
+COVID_survey_df <- read_excel("COVID_SchoolSurvey_R2_Data-and-Codebook.xlsx", 1)
 
 #4. Internet access
 #4.1 Total
-Total_School_connectivity_df <- read_excel("School-Age-Digital-Connectivity.xlsx", 2)
+Total_school_connectivity_df <- read_excel("School-Age-Digital-Connectivity.xlsx", 2)
 
 #4.2 Pre-Primary
 preprimary_cconnectivity_df <- read_excel("School-Age-Digital-Connectivity.xlsx", 3)

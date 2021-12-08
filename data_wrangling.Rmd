@@ -1,0 +1,148 @@
+---
+title: "Plots"
+author: "Caroline & Julia"
+date: "12/7/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+```{r}
+# Creating a month_year column
+
+sf <- stamp("02-2019", orders = "my") 
+
+closures_df$Date <- lubridate::dmy(closures_df$Date)
+
+closures_df <- closures_df %>%
+  mutate(month_year = sf(Date))
+
+
+#school closure
+
+is.factor(closures_df$Status)
+table(closures_df$Status)
+closures_df$Status <- factor(closures_df$Status, levels = c("Closed due to COVID-19 ", "Partially open", "Fully open", "Academic break"))
+
+```
+
+
+
+
+
+```{r}
+##Teacher vaccination data
+names(teacher_vac_df)[names(teacher_vac_df) == "Vaccination data reference date"] <- "Date"
+names(teacher_vac_df)[names(teacher_vac_df) == "Teacher prioritization in vaccination plans"] <- "vac_priority_status"
+head(teacher_vac_df)
+
+is.factor(teacher_vac_df$vac_priority_status)
+table(teacher_vac_df$vac_priority_status)
+teacher_vac_df$vac_priority_status<- factor(teacher_vac_df$vac_priority_status, levels = c("Group 1", "Group 2", "Group 3 or lower", "Not prioritized", "Not specified", "No data"))
+
+
+#Cummulative Closure Data
+head(cumulative_closure_df)
+
+names(cumulative_closure_df)[names( cumulative_closure_df) == "UNICEF Country"] <- "country"
+names(cumulative_closure_df)[names( cumulative_closure_df) == "UNICEF Region"] <- "region"
+names(cumulative_closure_df)[names( cumulative_closure_df) == "Income Group"] <- "income_group"
+names(cumulative_closure_df)[names( cumulative_closure_df) == "Days: Academic break"] <- "academic_break"
+names(cumulative_closure_df)[names( cumulative_closure_df) == "Days: Fully closed"] <- "fully_closed"
+names(cumulative_closure_df)[names( cumulative_closure_df) == "Days: Fully open"] <- "fully_open"
+names(cumulative_closure_df)[names( cumulative_closure_df) == "Days:  Partially closed"] <- "partially_closed"
+names(cumulative_closure_df)[names( cumulative_closure_df) == "Instruction Days"] <- "instructions_date"
+names(cumulative_closure_df)[names( cumulative_closure_df) == "Pre-primary"] <- "pre_primary"
+names(cumulative_closure_df)[names( cumulative_closure_df) == "Lower Secondary"] <- "lower_secondary"
+names(cumulative_closure_df)[names( cumulative_closure_df) == "Upper Secondary"] <- "upper_secondary"
+
+
+##connectivity data
+head(Total_school_connectivity_df)
+
+names(Total_school_connectivity_df)[names(Total_school_connectivity_df) == "Countries and areas"] <- "country"
+names(Total_school_connectivity_df)[names(Total_school_connectivity_df) == "Sub-region"] <- "sub_region"
+names(Total_school_connectivity_df)[names(Total_school_connectivity_df) == "Income Group"] <- "income_group"
+names(Total_school_connectivity_df)[names(Total_school_connectivity_df) == "...12"] <- "Date"
+
+
+#Vaccination rates
+head(teacher_vac_df)
+names(teacher_vac_df)[names(teacher_vac_df) == "Country"] <- "country"
+names(teacher_vac_df)[names(teacher_vac_df) == "% of teachers with at least one dosis"] <- "first_shot"
+names(teacher_vac_df)[names(teacher_vac_df) == "% of teachers fully vaccinated"] <- "second_shot"
+```
+
+
+```{r}
+#Join data frames
+complete_schools_df <- dplyr::left_join(cumulative_closure_df,
+Total_school_connectivity_df, 
+  by = "ISO3" ## Be specific about the joining column
+  ) %>%
+select(ISO3, country.x, region, income_group.x, academic_break, fully_closed, fully_open, partially_closed, instructions_date, pre_primary, Primary, lower_secondary, upper_secondary, Total)
+
+names(complete_schools_df)[names(complete_schools_df) == "income_group.x"] <- "income_group"
+names(complete_schools_df)[names(complete_schools_df) == "country.x"] <- "country"
+names(complete_schools_df)[names(complete_schools_df) == "Total"] <- "internet_access"
+names(complete_schools_df)[names(complete_schools_df) == "Primary"] <- "primary"
+
+
+
+complete_schools_df <- dplyr::left_join(complete_schools_df,
+teacher_vac_df, 
+  by = "country" 
+  ) %>%
+  select(-c(first_shot, second_shot, Date))
+
+head(complete_schools_df)
+
+
+```
+
+
+
+
+```{r}
+ school_plot <- movies() %>% 
+      ggplot(aes(
+        x = xvar,
+        y = yvar,
+        fill = has_oscar,
+        colour = has_oscar,
+        ### Answer to Exercise 2:
+        size = BoxOffice,
+        text = paste0(
+          "<b>", Title, "</b><br>",
+          "Year: ", Year, "<br>",
+          "Box Office: $", round(BoxOffice / 1000000, digits = 1), "m"
+        )
+      )) +
+      geom_point(shape = 21) +
+      ### Answer to Exercise 2:
+      scale_size() +
+      scale_fill_viridis(discrete=TRUE, option="C", name = "Won an Oscar", labels = c("Yes", "No"), alpha = 0.7) +
+      scale_colour_viridis(discrete=TRUE, guide="none", option="C", alpha = 0.9) +
+      theme_ipsum() +
+      ylab(paste(yvar_name)) +
+      xlab(paste(xvar_name)) +
+      guides(fill=guide_legend(title="Won an Oscar"))
+    
+    ggplotly(p, tooltip = "text", height = 400)
+  })
+  
+  output$n_movies <- renderText({ nrow(movies()) })
+}
+
+movies
+movies
+movies
+
+
+
+```
+
