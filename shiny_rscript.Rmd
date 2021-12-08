@@ -1,4 +1,4 @@
-
+install.packages("shinydashboard")
 
 ##Defining shiny dashboard components and publishing
 ```{r}
@@ -6,60 +6,22 @@ library(shinydashboard)
 library(shiny)
 
 ui <- fluidPage(
-  titlePanel("COVID-19 School Closures Dashboard"),
-  # fluidRow(
-  #   column(3,
-  #   )
-  #   ),
+  titlePanel("Basic dashboard"),
   sidebarLayout(
-    sidebarPanel(
-      helpText("sidebar panel"),
-  
-      selectInput("month_select", label = "Select the Month",
-          choices = c("02-2020","03-2020","04-2020",
-                      "05-2020","06-2020","07-2020",
-                      "08-2020","09-2020","10-2020",
-                      "11-2020","12-2020","01-2021",
-                      "02-2021","03-2021","04-2021",
-                      "05-2021","06-2021","07-2021",
-                      "08-2021","09-2021","10-2021",
-                      "11-2021"),
-          selected = "11-2021"),
-      
-      ## insert another widget here,
-    ),
-    mainPanel(
-      plotlyOutput("fig", width = "100%")
-      # insert another Output here
-      )
+    sidebarPanel("sidebar panel"),
+    mainPanel("main panel")
   ))
 
-Z_Breaks = function(n){
-CUTS = seq(0,1,length.out=n+1)
-rep(CUTS,ifelse(CUTS %in% 0:1,1,2))
-}
 
 server <- function(input, output) {
-  output$fig <- renderPlotly({
-   
-  filteredData <- filter(closures_df, month_year == input$month_select)
-  
-  colorScale <- data.frame(z=Z_Breaks(nfactor),
-        col=rep(foo,each=2),stringsAsFactors=FALSE)
-  
-  fig <- plot_ly(filteredData, 
-         type='choropleth', 
-         locations= ~ISO, 
-         z=filteredData$test, 
-         text=filteredData$Country,
-         colorscale=colorScale,
-  colorbar=list(tickvals=1:nfactor, ticktext=names(foo))
-  )
-  
-  fig
-   })
+  # set.seed(122)
+  # histdata <- rnorm(500)
+  # 
+  # output$plot1 <- renderPlot({
+  #   data <- histdata[seq_len(input$slider)]
+  #   hist(data)
+  # })
 }
-
 
 shinyApp(ui, server)
 
@@ -70,8 +32,9 @@ shinyApp(ui, server)
 library(tidyverse)
 library(readr)
 library(lubridate)
-library(RColorBrewer)
 closures_df <- read_csv("covid_impact_education.csv")
+
+view(closures_df)
 
 # Creating a month_year column
 sf <- stamp("02-2019", orders = "my") 
@@ -81,20 +44,15 @@ closures_df$Date <- lubridate::dmy(closures_df$Date)
 closures_df <- closures_df %>%
   mutate(month_year = sf(Date))
 
-# Factoring Status
+
 is.factor(closures_df$Status)
 table(closures_df$Status)
-closures_df$Status <- factor(closures_df$Status, levels = c("Closed due to COVID-19", "Partially open", "Fully open", "Academic break"))
+closures_df$Status <- factor(closures_df$Status, levels = c("Closed due to COVID-19 ", "Partially open", "Fully open", "Academic break"))
 
-closures_df$test <- as.numeric(closures_df$Status)
 
-nfactor <- length(levels(closures_df$Status))
-foo <- brewer.pal(n = nfactor, name = "Set1")
-names(foo) <- levels(closures_df$Status)
 
-total_month_year <- closures_df %>%
-  group_by(Country) %>%
-  unique(month_year)
+
+
 
 ```
 
@@ -104,29 +62,34 @@ library(ggplot2)
 library(ggpubr)
 library(plotly)
 
-Z_Breaks = function(n){
-CUTS = seq(0,1,length.out=n+1)
-rep(CUTS,ifelse(CUTS %in% 0:1,1,2))
-}
+# light grey boundaries
+l <- list(color = toRGB("grey"), width = 0.5)
 
-colorScale <- data.frame(z=Z_Breaks(nfactor),
-        col=rep(foo,each=2),stringsAsFactors=FALSE)
-
-
-fig <- plot_ly(*INSERTDF*, 
-               type='choropleth', 
-               locations= ~ISO, 
-               z=closures_test$test, 
-               text=closures_test$Country,
-               colorscale=colorScale,
-  colorbar=list(tickvals=1:nfactor, ticktext=names(foo))
+# specify map projection/options
+g <- list(
+  showframe = FALSE,
+  showcoastlines = FALSE,
+  projection = list(type = 'Mercator')
 )
 
-fig %>%
-  layout(autosize = F, width = 750, height = 250)
+closures_test <- closures_df %>%
+  dplyr::filter(month_year == "01-2021")
 
+fig <- plot_geo(closures_df)
 
+fig <- plot_ly(closures_test, type='choropleth', locations=closures_test$ISO, z=closures_test$Status, text=closures_test$Country)
 
+fig
+fig <- fig %>% add_trace(
+    z = ~Status, color = ~Status, 
+    text = ~Country, locations = ~ISO, marker = list(line = l)
+  )
+
+fig <- fig %>% colorbar(title = 'GDP Billions US$', tickprefix = '$')
+fig <- fig %>% layout(
+    title = '2014 Global GDP<br>Source:<a href="https://www.cia.gov/library/publications/the-world-factbook/fields/2195.html">CIA World Factbook</a>',
+    geo = g
+  )
 
 
 
