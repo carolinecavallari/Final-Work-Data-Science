@@ -101,6 +101,9 @@ teacher_vac_df,
 
 head(complete_schools_df)
 
+complete_schools_df <- complete_schools_df %>%
+  mutate(., total_students = pre_primary + primary + lower_secondary + upper_secondary, .keep = "all")
+complete_schools_df
 
 ```
 
@@ -108,40 +111,31 @@ head(complete_schools_df)
 
 
 ```{r}
- school_plot <- movies() %>% 
-      ggplot(aes(
-        x = xvar,
-        y = yvar,
-        fill = has_oscar,
-        colour = has_oscar,
-        ### Answer to Exercise 2:
-        size = BoxOffice,
-        text = paste0(
-          "<b>", Title, "</b><br>",
-          "Year: ", Year, "<br>",
-          "Box Office: $", round(BoxOffice / 1000000, digits = 1), "m"
-        )
-      )) +
-      geom_point(shape = 21) +
-      ### Answer to Exercise 2:
-      scale_size() +
-      scale_fill_viridis(discrete=TRUE, option="C", name = "Won an Oscar", labels = c("Yes", "No"), alpha = 0.7) +
-      scale_colour_viridis(discrete=TRUE, guide="none", option="C", alpha = 0.9) +
-      theme_ipsum() +
-      ylab(paste(yvar_name)) +
-      xlab(paste(xvar_name)) +
-      guides(fill=guide_legend(title="Won an Oscar"))
-    
-    ggplotly(p, tooltip = "text", height = 400)
-  })
-  
-  output$n_movies <- renderText({ nrow(movies()) })
-}
+complete_schools_df 
+is.factor(complete_schools_df$vac_priority_status)
+table(complete_schools_df$vac_priority_status)
 
-movies
-movies
-movies
 
+table(complete_schools_df$region)
+
+
+
+
+```
+
+```{r}
+ggplot(complete_schools_df,
+       aes(x = internet_access,
+           y = fully_closed, 
+           size = total_students,
+           color = vac_priority_status)) +
+   geom_point(alpha = 0.4) +
+  labs(title = "A Brief Overview of Eduation Inequality during the Covid-19 Pandemic",
+       x = "Connectivity rates per country",
+       y = "Days of school's full closure") +
+  geom_text_repel(aes(label = country), size = 3) +
+        theme_minimal() +
+        guides(size = FALSE, scale = "none")
 
 
 ```

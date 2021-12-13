@@ -1,10 +1,34 @@
+---
+title: "test"
+author: "Caroline & Julia"
+date: "12/13/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
 ##Defining shiny dashboard components and publishing
 ```{r}
 library(shinydashboard)
 library(shiny)
+
+ui <- dashboardPage(
+    dashboardHeader(title = "COVID-19 School Closures Dashboard"),
+    
+    dashboardSidebar(
+        sidebarMenu(
+            menuItem("School Closure Map",
+                     tabName = "weight_class_tab",
+                     icon = icon("dashboard")),
+            menuItem("Head to Head",
+                     tabName = "head_tab",
+                     icon = icon("dashboard"))
+
+
 ui <- fluidPage(
-  titlePanel("COVID-19 School Closures Dashboard"),
+  titlePanel(""),
   # fluidRow(
   #   column(3,
   #   )
@@ -24,8 +48,12 @@ ui <- fluidPage(
                       "11-2021"),
           selected = "11-2021"),
       
-      ## insert another widget here,
-    ), 
+      selectInput("region", label = "Select the Region",
+          choices = c("East Asia and Pacific", "Eastern and Southern Africa",
+                      "Eastern Europe and Central Asia", "Latin America and Caribbean",
+                      "Middle East and North Africa", "North America ", "South Asia",
+                      "West and Central Africa", "Western Europe"),
+          selected = "East Asia and Pacific"), 
     
     
     mainPanel(
@@ -56,7 +84,28 @@ server <- function(input, output) {
   
   fig
    })
+
+  output$plot2 <- renderPlotly({
+  
+  plot2 <- ggplot(complete_schools_df,
+       aes(x = internet_access,
+           y = fully_closed, 
+           size = total_students,
+           color = vac_priority_status)) +
+   geom_point(alpha = 0.4) +
+  labs(title = "A Brief Overview of Eduation Inequality during the Covid-19 Pandemic",
+       x = "Connectivity rates per country",
+       y = "Days of school's full closure") +
+  geom_text_repel(aes(label = country), size = 3) +
+        theme_minimal() +
+        guides(size = FALSE, scale = "none")
+  
+  ggplotly(plot2, tooltip = "text", height = 400)
+})
+  
+  
 }
+
 shinyApp(ui, server)
 ```
 
@@ -107,3 +156,31 @@ fig <- plot_ly(*INSERTDF*,
 fig %>%
   layout(autosize = F, width = 750, height = 250)
 ```
+
+
+
+##Plot 2
+```{r}
+output$plot2 <- renderPlotly({
+  
+  plot2 <- ggplot(complete_schools_df,
+       aes(x = internet_access,
+           y = fully_closed, 
+           size = total_students,
+           color = vac_priority_status)) +
+   geom_point(alpha = 0.4) +
+  labs(title = "A Brief Overview of Eduation Inequality during the Covid-19 Pandemic",
+       x = "Connectivity rates per country",
+       y = "Days of school's full closure") +
+  geom_text_repel(aes(label = country), size = 3) +
+        theme_minimal() +
+        guides(size = FALSE, scale = "none")
+  
+  ggplotly(plot2, tooltip = "text", height = 400)
+})
+
+
+
+
+```
+
