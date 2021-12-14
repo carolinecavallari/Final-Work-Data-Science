@@ -35,6 +35,22 @@ ui <- fluidPage(titlePanel("COVID-19 School Closures Dashboard"),
                       selected = "11-2021"
                     )),
                   wellPanel(
+  #                   checkboxGroupInput("region", label = ("Select the region(s) for the
+  #                                                           scatterPlot"), 
+  #                              choices = list("All" = "all", 
+  #                               "East Asia and Pacific" = "East Asia and Pacific",
+  #                               "Eastern and Southern Africa" = "Eastern and Southern Africa",
+  #                               "Eastern Europe and Central Asia" = "Eastern Europe and Central Asia",
+  #                               "Latin America and Caribbean" = "Latin America and Caribbean",
+  #                               "Middle East and North Africa" = "Middle East and North Africa",
+  #                               "North America " = "North America ",
+  #                               "South Asia" = "South Asia",
+  #                               "West and Central Africa" = "West and Central Africa",
+  #                               "Western Europe"
+  #                              ),
+  #                               selected = "all"),
+  #                   hr(),
+  # fluidRow(column(3, verbatimTextOutput("value"))),
                     selectInput(
                       "region",
                       label = "Select the Region for the ScatterPlot",

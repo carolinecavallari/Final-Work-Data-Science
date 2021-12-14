@@ -34,7 +34,7 @@ closures_df$Status <- factor(closures_df$Status, levels = c("Closed due to COVID
 
 closures_table_df <- select(complete_schools_df, c(country, region, 
                           fully_closed, partially_closed, internet_access,
-                          vac_priority_status, total_students))
+                          vac_priority_status, total_students, tv, radio, online_learning))
 
 ```
 
