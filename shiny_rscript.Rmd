@@ -1,15 +1,14 @@
 
 ##Defining shiny dashboard components and publishing
 ```{r}
-library(shinydashboard)
-library(shiny)
+
 ui <- fluidPage(titlePanel("COVID-19 School Closures Dashboard"),
                 fluidRow(column(
                   3,
                   wellPanel(
                     selectInput(
                       "month_select",
-                      label = "Select the Month",
+                      label = "Select the Month to show on the Map",
                       choices = c(
                         "02-2020",
                         "03-2020",
@@ -35,11 +34,11 @@ ui <- fluidPage(titlePanel("COVID-19 School Closures Dashboard"),
                         "11-2021"
                       ),
                       selected = "11-2021"
-                    ),
-                    
+                    )),
+                  wellPanel(
                     selectInput(
                       "region",
-                      label = "Select the Region",
+                      label = "Select the Region for the ScatterPlot",
                       choices = c(
                         "all",
                         "East Asia and Pacific",
@@ -53,7 +52,7 @@ ui <- fluidPage(titlePanel("COVID-19 School Closures Dashboard"),
                         "Western Europe"
                       ),
                       selected = "all"
-                    )
+                    ),
                   )
                 ),
 column(9,
@@ -61,9 +60,6 @@ column(9,
        plotlyOutput("plot2", width = "100%"),
        DT::dataTableOutput("closures_table"))))
 
-
-      
- 
 
 server <- function(input, output) {
   output$fig <- renderPlotly({
@@ -86,7 +82,12 @@ server <- function(input, output) {
    })
 
   output$plot2 <- renderPlotly({
-  region_data <- filter(complete_schools_df, region == input$region)
+  
+  region_data <- if(input$region != "all"){
+    filter(complete_schools_df, region == input$region)
+  } else {
+    complete_schools_df
+  }
     
   plot2 <- ggplot(region_data,
        aes(x = internet_access,
@@ -94,21 +95,24 @@ server <- function(input, output) {
            size = total_students,
            color = vac_priority_status)) +
    geom_point(alpha = 0.4) +
-     geom_text(aes(label = country), size = 3) +
-  scale_x_continuous(breaks = seq(from = 0.0, to = 1.0, by = 0.1)) +
-  labs(title = "A Brief Overview of Eduation Inequality during the Covid-19 Pandemic",
+  xlim(0.0, 1.0) +
+  scale_x_reverse() +
+  labs(title = "A Brief Overview of Education Inequality during the Covid-19 Pandemic",
        x = "Connectivity rates per country",
        y = "Days of school's full closure") +
-        theme_minimal() 
+  geom_text_repel(aes(label = country), size = 3) +
+        theme_minimal() +
+        guides(size = FALSE, scale = "none")
   
 })
-  output$closures_table <- DT::renderDataTable(closures_table_df,
+  
+    output$closures_table <- DT::renderDataTable(closures_table_df,
                                         options = list(scrollX = TRUE),
                                         rownames = FALSE)
+  
 }
-
-
 shinyApp(ui, server)
+
 ```
 
 
