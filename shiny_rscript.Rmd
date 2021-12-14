@@ -111,59 +111,6 @@ server <- function(input, output) {
 shinyApp(ui, server)
 ```
 
-## Dataframes
-```{r}
-closures_df <- read_csv("covid_impact_education.csv")
-# Creating a month_year column
-sf <- stamp("02-2019", orders = "my") 
-closures_df$Date <- lubridate::dmy(closures_df$Date)
-closures_df <- closures_df %>%
-  mutate(month_year = sf(Date))
-# Factoring Status
-is.factor(closures_df$Status)
-table(closures_df$Status)
-closures_df$Status <- factor(closures_df$Status, levels = c("Closed due to COVID-19", "Partially open", "Fully open", "Academic break"))
-closures_df$test <- as.numeric(closures_df$Status)
-nfactor <- length(levels(closures_df$Status))
-foo <- brewer.pal(n = nfactor, name = "Set1")
-names(foo) <- levels(closures_df$Status)
-```
-
-## Plots
-```{r}
-
-Z_Breaks = function(n){
-CUTS = seq(0,1,length.out=n+1)
-rep(CUTS,ifelse(CUTS %in% 0:1,1,2))
-}
-
-
-
-colorScale <- data.frame(z=Z_Breaks(nfactor),
-        col=rep(foo,each=2),stringsAsFactors=FALSE)
-fig <- plot_ly(*INSERTDF*, 
-               type='choropleth', 
-               locations= ~ISO, 
-               z=closures_test$test, 
-               text=closures_test$Country,
-               colorscale=colorScale,
-  colorbar=list(tickvals=1:nfactor, ticktext=names(foo))
-)
-fig %>%
-  layout(autosize = F, width = 750, height = 250)
-
-
-Z_Breaks = function(n){
-CUTS = seq(0,1,length.out=n+1)
-rep(CUTS,ifelse(CUTS %in% 0:1,1,2))
-}
-
-
-
-
-  region_data <- if(input$region != "all"){filter(complete_schools_df, region == input$region)}
-```
-
 
 
 
