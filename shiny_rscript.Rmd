@@ -3,13 +3,15 @@
 ```{r}
 library(shinydashboard)
 library(shiny)
+library(DT)
+
 ui <- fluidPage(titlePanel("COVID-19 School Closures Dashboard"),
                 fluidRow(column(
                   3,
                   wellPanel(
                     selectInput(
                       "month_select",
-                      label = "Select the Month",
+                      label = "Select the Month to show on the Map",
                       choices = c(
                         "02-2020",
                         "03-2020",
@@ -35,11 +37,11 @@ ui <- fluidPage(titlePanel("COVID-19 School Closures Dashboard"),
                         "11-2021"
                       ),
                       selected = "11-2021"
-                    ),
-                    
+                    )),
+                  wellPanel(
                     selectInput(
                       "region",
-                      label = "Select the Region",
+                      label = "Select the Region for the ScatterPlot",
                       choices = c(
                         "all",
                         "East Asia and Pacific",
@@ -53,16 +55,14 @@ ui <- fluidPage(titlePanel("COVID-19 School Closures Dashboard"),
                         "Western Europe"
                       ),
                       selected = "all"
-                    )
+                    ),
                   )
                 ),
 column(9,
-       plotlyOutput("fig", width = "100%"),
-       plotlyOutput("plot2", width = "100%"))))
+       plotlyOutput("fig", width = "120%"),
+       plotlyOutput("plot2", width = "100%"),
+       DT::dataTableOutput("closures_table"))))
 
-
-      
- 
 
 server <- function(input, output) {
   output$fig <- renderPlotly({
@@ -85,7 +85,12 @@ server <- function(input, output) {
    })
 
   output$plot2 <- renderPlotly({
-  region_data <- if(input$region != "all"){filter(complete_schools_df, region == input$region)}
+  
+  region_data <- if(input$region != "all"){
+    filter(complete_schools_df, region == input$region)
+  } else {
+    complete_schools_df
+  }
     
   plot2 <- ggplot(region_data,
        aes(x = internet_access,
@@ -93,7 +98,7 @@ server <- function(input, output) {
            size = total_students,
            color = vac_priority_status)) +
    geom_point(alpha = 0.4) +
-  labs(title = "A Brief Overview of Eduation Inequality during the Covid-19 Pandemic",
+  labs(title = "A Brief Overview of Education Inequality during the Covid-19 Pandemic",
        x = "Connectivity rates per country",
        y = "Days of school's full closure") +
   geom_text_repel(aes(label = country), size = 3) +
@@ -102,8 +107,21 @@ server <- function(input, output) {
   
 })
   
+    output$closures_table <- DT::renderDataTable(closures_table_df,
+                                        options = list(scrollX = TRUE),
+                                        rownames = FALSE)
+  
 }
 shinyApp(ui, server)
+
+region1 <- "all"
+  
+region_data <- if(region1 != "all"){
+    filter(complete_schools_df, region = "South Asia")
+} else {
+  complete_schools_df
+}
+view(region_data)
 ```
 
 ## Dataframes
@@ -136,28 +154,55 @@ total_month_year <- closures_df %>%
 library(ggplot2)
 library(ggpubr)
 library(plotly)
+
 Z_Breaks = function(n){
 CUTS = seq(0,1,length.out=n+1)
 rep(CUTS,ifelse(CUTS %in% 0:1,1,2))
 }
+
 colorScale <- data.frame(z=Z_Breaks(nfactor),
         col=rep(foo,each=2),stringsAsFactors=FALSE)
-fig <- plot_ly(*INSERTDF*, 
+
+closures_test <- filter(closures_df, month_year == "02-2020")
+
+pal <- c("red", "yellow", "green", "blue")
+pal <- setNames(pal, c("Closed due to COVID-19", "Partially open", "Fully open", "Academic break"))
+
+myColors <- brewer.pal(4,"Set1")
+names(myColors) <- levels(closures_test$Status)
+colScale <- scale_colour_manual(name = "Status",values = myColors)
+
+
+fig <- plot_ly(closures_test, 
                type='choropleth', 
                locations= ~ISO, 
                z=closures_test$test, 
                text=closures_test$Country,
-               colorscale=colorScale,
-  colorbar=list(tickvals=1:nfactor, ticktext=names(foo))
+               colors = pal,
+               colorbar=list(tickvals=1:nfactor, ticktext=names(foo))
 )
-fig %>%
-  layout(autosize = F, width = 750, height = 250)
 
+fig1 <- plot_ly(closures_test, 
+               type = 'choropleth',
+               locations = ~ISO, 
+               z = ~test, 
+              text=closures_test$Country,
+               #color = ~Status,
+               colors = pal
+)
+
+fig1
+
+
+
+fig
 
 Z_Breaks = function(n){
 CUTS = seq(0,1,length.out=n+1)
 rep(CUTS,ifelse(CUTS %in% 0:1,1,2))
 }
+
+
 ```
 
 
