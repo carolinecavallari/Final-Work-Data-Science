@@ -1,10 +1,9 @@
 
 ##Defining shiny dashboard components and publishing
 ```{r}
-
 ui <- fluidPage(titlePanel("COVID-19 School Closures Dashboard"),
                 fluidRow(column(
-                  3,
+                  2,
                   wellPanel(
                     selectInput(
                       "month_select",
@@ -55,8 +54,8 @@ ui <- fluidPage(titlePanel("COVID-19 School Closures Dashboard"),
                     ),
                   )
                 ),
-column(9,
-       plotlyOutput("fig", width = "120%"),
+column(10,
+       plotlyOutput("fig", width = "100%"),
        plotlyOutput("plot2", width = "100%"),
        DT::dataTableOutput("closures_table"))))
 
@@ -95,12 +94,12 @@ server <- function(input, output) {
            size = total_students,
            color = vac_priority_status)) +
    geom_point(alpha = 0.4) +
+    geom_text(aes(label = country), size = 3) +
   xlim(0.0, 1.0) +
   scale_x_reverse() +
   labs(title = "A Brief Overview of Education Inequality during the Covid-19 Pandemic",
        x = "Connectivity rates per country",
        y = "Days of school's full closure") +
-  geom_text_repel(aes(label = country), size = 3) +
         theme_minimal() +
         guides(size = FALSE, scale = "none")
   
@@ -112,11 +111,5 @@ server <- function(input, output) {
   
 }
 shinyApp(ui, server)
-
 ```
-
-
-
-
-
 
