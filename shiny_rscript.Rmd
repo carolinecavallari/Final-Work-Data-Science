@@ -3,40 +3,67 @@
 ```{r}
 library(shinydashboard)
 library(shiny)
-ui <- fluidPage(
-  titlePanel("COVID-19 School Closures Dashboard"),
-  # fluidRow(
-  #   column(3,
-  #   )
-  #   ),
-  sidebarLayout(
-    sidebarPanel(
-      helpText("sidebar panel"),
-  
-      selectInput("month_select", label = "Select the Month",
-          choices = c("02-2020","03-2020","04-2020",
-                      "05-2020","06-2020","07-2020",
-                      "08-2020","09-2020","10-2020",
-                      "11-2020","12-2020","01-2021",
-                      "02-2021","03-2021","04-2021",
-                      "05-2021","06-2021","07-2021",
-                      "08-2021","09-2021","10-2021",
-                      "11-2021"),
-          selected = "11-2021"),
+ui <- fluidPage(titlePanel("COVID-19 School Closures Dashboard"),
+                fluidRow(column(
+                  3,
+                  wellPanel(
+                    selectInput(
+                      "month_select",
+                      label = "Select the Month",
+                      choices = c(
+                        "02-2020",
+                        "03-2020",
+                        "04-2020",
+                        "05-2020",
+                        "06-2020",
+                        "07-2020",
+                        "08-2020",
+                        "09-2020",
+                        "10-2020",
+                        "11-2020",
+                        "12-2020",
+                        "01-2021",
+                        "02-2021",
+                        "03-2021",
+                        "04-2021",
+                        "05-2021",
+                        "06-2021",
+                        "07-2021",
+                        "08-2021",
+                        "09-2021",
+                        "10-2021",
+                        "11-2021"
+                      ),
+                      selected = "11-2021"
+                    ),
+                    
+                    selectInput(
+                      "region",
+                      label = "Select the Region",
+                      choices = c(
+                        "all",
+                        "East Asia and Pacific",
+                        "Eastern and Southern Africa",
+                        "Eastern Europe and Central Asia",
+                        "Latin America and Caribbean",
+                        "Middle East and North Africa",
+                        "North America ",
+                        "South Asia",
+                        "West and Central Africa",
+                        "Western Europe"
+                      ),
+                      selected = "all"
+                    )
+                  )
+                ),
+column(9,
+       plotlyOutput("fig", width = "100%"),
+       plotlyOutput("plot2", width = "100%"))))
+
+
       
-      ## insert another widget here,
-    ), 
-    
-    
-    mainPanel(
-      plotlyOutput("fig", width = "100%")
-      # insert another Output here
-      )
-  ))
-Z_Breaks = function(n){
-CUTS = seq(0,1,length.out=n+1)
-rep(CUTS,ifelse(CUTS %in% 0:1,1,2))
-}
+ 
+
 server <- function(input, output) {
   output$fig <- renderPlotly({
    
@@ -56,6 +83,25 @@ server <- function(input, output) {
   
   fig
    })
+
+  output$plot2 <- renderPlotly({
+  region_data <- if(input$region != "all"){filter(complete_schools_df, region == input$region)}
+    
+  plot2 <- ggplot(region_data,
+       aes(x = internet_access,
+           y = fully_closed, 
+           size = total_students,
+           color = vac_priority_status)) +
+   geom_point(alpha = 0.4) +
+  labs(title = "A Brief Overview of Eduation Inequality during the Covid-19 Pandemic",
+       x = "Connectivity rates per country",
+       y = "Days of school's full closure") +
+  geom_text_repel(aes(label = country), size = 3) +
+        theme_minimal() +
+        guides(size = FALSE, scale = "none")
+  
+})
+  
 }
 shinyApp(ui, server)
 ```
@@ -106,4 +152,16 @@ fig <- plot_ly(*INSERTDF*,
 )
 fig %>%
   layout(autosize = F, width = 750, height = 250)
+
+
+Z_Breaks = function(n){
+CUTS = seq(0,1,length.out=n+1)
+rep(CUTS,ifelse(CUTS %in% 0:1,1,2))
+}
 ```
+
+
+
+
+
+
