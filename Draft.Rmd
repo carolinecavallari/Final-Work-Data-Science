@@ -1,70 +1,77 @@
 ---
-title: "test"
+title: "Untitled"
 author: "Caroline & Julia"
-date: "12/13/2021"
+date: "12/14/2021"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 ##Defining shiny dashboard components and publishing
 ```{r}
 library(shinydashboard)
 library(shiny)
+ui <- fluidPage(titlePanel("COVID-19 School Closures Dashboard"),
+                fluidRow(column(
+                  3,
+                  wellPanel(
+                    selectInput(
+                      "month_select",
+                      label = "Select the Month",
+                      choices = c(
+                        "02-2020",
+                        "03-2020",
+                        "04-2020",
+                        "05-2020",
+                        "06-2020",
+                        "07-2020",
+                        "08-2020",
+                        "09-2020",
+                        "10-2020",
+                        "11-2020",
+                        "12-2020",
+                        "01-2021",
+                        "02-2021",
+                        "03-2021",
+                        "04-2021",
+                        "05-2021",
+                        "06-2021",
+                        "07-2021",
+                        "08-2021",
+                        "09-2021",
+                        "10-2021",
+                        "11-2021"
+                      ),
+                      selected = "11-2021"
+                    ),
+                    
+                    selectInput(
+                      "region",
+                      label = "Select the Region",
+                      choices = c(
+                        "all",
+                        "East Asia and Pacific",
+                        "Eastern and Southern Africa",
+                        "Eastern Europe and Central Asia",
+                        "Latin America and Caribbean",
+                        "Middle East and North Africa",
+                        "North America ",
+                        "South Asia",
+                        "West and Central Africa",
+                        "Western Europe"
+                      ),
+                      selected = "all"
+                    )
+                  )
+                ),
+column(9,
+       plotlyOutput("fig", width = "120%"),
+       plotlyOutput("plot2", width = "100%"),
+       DT::dataTableOutput("closures_table"))))
 
-ui <- dashboardPage(
-    dashboardHeader(title = "COVID-19 School Closures Dashboard"),
-    
-    dashboardSidebar(
-        sidebarMenu(
-            menuItem("School Closure Map",
-                     tabName = "weight_class_tab",
-                     icon = icon("dashboard")),
-            menuItem("Head to Head",
-                     tabName = "head_tab",
-                     icon = icon("dashboard"))
 
-
-ui <- fluidPage(
-  titlePanel(""),
-  # fluidRow(
-  #   column(3,
-  #   )
-  #   ),
-  sidebarLayout(
-    sidebarPanel(
-      helpText("sidebar panel"),
-  
-      selectInput("month_select", label = "Select the Month",
-          choices = c("02-2020","03-2020","04-2020",
-                      "05-2020","06-2020","07-2020",
-                      "08-2020","09-2020","10-2020",
-                      "11-2020","12-2020","01-2021",
-                      "02-2021","03-2021","04-2021",
-                      "05-2021","06-2021","07-2021",
-                      "08-2021","09-2021","10-2021",
-                      "11-2021"),
-          selected = "11-2021"),
       
-      selectInput("region", label = "Select the Region",
-          choices = c("East Asia and Pacific", "Eastern and Southern Africa",
-                      "Eastern Europe and Central Asia", "Latin America and Caribbean",
-                      "Middle East and North Africa", "North America ", "South Asia",
-                      "West and Central Africa", "Western Europe"),
-          selected = "East Asia and Pacific"), 
-    
-    
-    mainPanel(
-      plotlyOutput("fig", width = "100%")
-      # insert another Output here
-      )
-  ))
-Z_Breaks = function(n){
-CUTS = seq(0,1,length.out=n+1)
-rep(CUTS,ifelse(CUTS %in% 0:1,1,2))
-}
+ 
+
 server <- function(input, output) {
   output$fig <- renderPlotly({
    
@@ -86,101 +93,33 @@ server <- function(input, output) {
    })
 
   output$plot2 <- renderPlotly({
-  
-  plot2 <- ggplot(complete_schools_df,
+  region_data <- filter(complete_schools_df, region == input$region)
+    
+  plot2 <- ggplot(region_data,
        aes(x = internet_access,
            y = fully_closed, 
            size = total_students,
            color = vac_priority_status)) +
    geom_point(alpha = 0.4) +
+     geom_text(aes(label = country), size = 3) +
+  scale_x_continuous(breaks = seq(from = 0.0, to = 1.0, by = 0.1)) +
   labs(title = "A Brief Overview of Eduation Inequality during the Covid-19 Pandemic",
        x = "Connectivity rates per country",
        y = "Days of school's full closure") +
-  geom_text_repel(aes(label = country), size = 3) +
-        theme_minimal() +
-        guides(size = FALSE, scale = "none")
+        theme_minimal() 
   
-  ggplotly(plot2, tooltip = "text", height = 400)
 })
-  
-  
+  output$closures_table <- DT::renderDataTable(closures_table_df,
+                                        options = list(scrollX = TRUE),
+                                        rownames = FALSE)
 }
+
 
 shinyApp(ui, server)
 ```
 
-## Dataframes
-```{r}
-library(tidyverse)
-library(readr)
-library(lubridate)
-library(RColorBrewer)
-closures_df <- read_csv("covid_impact_education.csv")
-# Creating a month_year column
-sf <- stamp("02-2019", orders = "my") 
-closures_df$Date <- lubridate::dmy(closures_df$Date)
-closures_df <- closures_df %>%
-  mutate(month_year = sf(Date))
-# Factoring Status
-is.factor(closures_df$Status)
-table(closures_df$Status)
-closures_df$Status <- factor(closures_df$Status, levels = c("Closed due to COVID-19", "Partially open", "Fully open", "Academic break"))
-closures_df$test <- as.numeric(closures_df$Status)
-nfactor <- length(levels(closures_df$Status))
-foo <- brewer.pal(n = nfactor, name = "Set1")
-names(foo) <- levels(closures_df$Status)
-total_month_year <- closures_df %>%
-  group_by(Country) %>%
-  unique(month_year)
-```
-
-## Plots
-```{r}
-library(ggplot2)
-library(ggpubr)
-library(plotly)
-Z_Breaks = function(n){
-CUTS = seq(0,1,length.out=n+1)
-rep(CUTS,ifelse(CUTS %in% 0:1,1,2))
-}
-colorScale <- data.frame(z=Z_Breaks(nfactor),
-        col=rep(foo,each=2),stringsAsFactors=FALSE)
-fig <- plot_ly(*INSERTDF*, 
-               type='choropleth', 
-               locations= ~ISO, 
-               z=closures_test$test, 
-               text=closures_test$Country,
-               colorscale=colorScale,
-  colorbar=list(tickvals=1:nfactor, ticktext=names(foo))
-)
-fig %>%
-  layout(autosize = F, width = 750, height = 250)
-```
-
-
-
-##Plot 2
-```{r}
-output$plot2 <- renderPlotly({
-  
-  plot2 <- ggplot(complete_schools_df,
-       aes(x = internet_access,
-           y = fully_closed, 
-           size = total_students,
-           color = vac_priority_status)) +
-   geom_point(alpha = 0.4) +
-  labs(title = "A Brief Overview of Eduation Inequality during the Covid-19 Pandemic",
-       x = "Connectivity rates per country",
-       y = "Days of school's full closure") +
-  geom_text_repel(aes(label = country), size = 3) +
-        theme_minimal() +
-        guides(size = FALSE, scale = "none")
-  
-  ggplotly(plot2, tooltip = "text", height = 400)
-})
 
 
 
 
-```
 

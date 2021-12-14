@@ -57,8 +57,9 @@ ui <- fluidPage(titlePanel("COVID-19 School Closures Dashboard"),
                   )
                 ),
 column(9,
-       plotlyOutput("fig", width = "100%"),
-       plotlyOutput("plot2", width = "100%"))))
+       plotlyOutput("fig", width = "120%"),
+       plotlyOutput("plot2", width = "100%"),
+       DT::dataTableOutput("closures_table"))))
 
 
       
@@ -85,7 +86,7 @@ server <- function(input, output) {
    })
 
   output$plot2 <- renderPlotly({
-  region_data <- if(input$region != "all"){filter(complete_schools_df, region == input$region)}
+  region_data <- filter(complete_schools_df, region == input$region)
     
   plot2 <- ggplot(region_data,
        aes(x = internet_access,
@@ -93,25 +94,25 @@ server <- function(input, output) {
            size = total_students,
            color = vac_priority_status)) +
    geom_point(alpha = 0.4) +
+     geom_text(aes(label = country), size = 3) +
+  scale_x_continuous(breaks = seq(from = 0.0, to = 1.0, by = 0.1)) +
   labs(title = "A Brief Overview of Eduation Inequality during the Covid-19 Pandemic",
        x = "Connectivity rates per country",
        y = "Days of school's full closure") +
-  geom_text_repel(aes(label = country), size = 3) +
-        theme_minimal() +
-        guides(size = FALSE, scale = "none")
+        theme_minimal() 
   
 })
-  
+  output$closures_table <- DT::renderDataTable(closures_table_df,
+                                        options = list(scrollX = TRUE),
+                                        rownames = FALSE)
 }
+
+
 shinyApp(ui, server)
 ```
 
 ## Dataframes
 ```{r}
-library(tidyverse)
-library(readr)
-library(lubridate)
-library(RColorBrewer)
 closures_df <- read_csv("covid_impact_education.csv")
 # Creating a month_year column
 sf <- stamp("02-2019", orders = "my") 
@@ -126,20 +127,18 @@ closures_df$test <- as.numeric(closures_df$Status)
 nfactor <- length(levels(closures_df$Status))
 foo <- brewer.pal(n = nfactor, name = "Set1")
 names(foo) <- levels(closures_df$Status)
-total_month_year <- closures_df %>%
-  group_by(Country) %>%
-  unique(month_year)
 ```
 
 ## Plots
 ```{r}
-library(ggplot2)
-library(ggpubr)
-library(plotly)
+
 Z_Breaks = function(n){
 CUTS = seq(0,1,length.out=n+1)
 rep(CUTS,ifelse(CUTS %in% 0:1,1,2))
 }
+
+
+
 colorScale <- data.frame(z=Z_Breaks(nfactor),
         col=rep(foo,each=2),stringsAsFactors=FALSE)
 fig <- plot_ly(*INSERTDF*, 
@@ -158,6 +157,11 @@ Z_Breaks = function(n){
 CUTS = seq(0,1,length.out=n+1)
 rep(CUTS,ifelse(CUTS %in% 0:1,1,2))
 }
+
+
+
+
+  region_data <- if(input$region != "all"){filter(complete_schools_df, region == input$region)}
 ```
 
 
