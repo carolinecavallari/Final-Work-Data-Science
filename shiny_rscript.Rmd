@@ -2,7 +2,9 @@
 ##Defining shiny dashboard components and publishing
 ```{r}
 ui <- dashboardPage(
-    dashboardHeader(title = "School Closures during the Covid-19 Pandemic"),
+    dashboardHeader(
+      title = "School Closures during the Covid-19 Pandemic",
+      titleWidth = 450),
     
     dashboardSidebar(
         sidebarMenu(
@@ -11,7 +13,10 @@ ui <- dashboardPage(
                      icon = icon("dashboard")),
             menuItem("By Country Table",
                      tabName = "table_tab",
-                     icon = icon("dashboard"))
+                     icon = icon("th-list")),
+            menuItem("Use Guide",
+                     tabName = "guide_tab",
+                     icon = icon("road"))
         )
     ),
     
@@ -75,7 +80,9 @@ ui <- dashboardPage(
                     ))
                     )),
             tabItem(tabName = "table_tab",
-                    DT::dataTableOutput("closures_table"))
+                    DT::dataTableOutput("closures_table")),
+            tabItem(tabName = "guide_tab",
+                    uiOutput("guide"))
         )
     ))
     
@@ -163,6 +170,14 @@ server <- function(input, output) {
                                 Status == "Academic break")
       
       paste("Countries on academic break: ", length(unique(filteredBreak$Country)))
+    })
+    
+    output$guide <- renderUI({
+      paste("Welcome to our dashboard!")
+      rawText <- readLines("Guide.txt")
+     splitText <- stringi::stri_split(str = rawText, regex = '\n')
+      replacedText <- lapply(splitText, p)
+      return(replacedText)
     })
   
 }
