@@ -120,17 +120,6 @@ table(complete_schools_df$region)
 ```
 
 
-
-
-```{r}
-#creating a table for closures_df
-
-closures_table_df <- select(complete_schools_df, c(country, region, 
-                          fully_closed, partially_closed, internet_access,
-                          vac_priority_status, total_students))
-
-```
-
 ```{r}
 #Wrangling UNESCO Database for distance learning 
 
@@ -172,15 +161,26 @@ unesco_reduced,
   ) 
 ```
 
+```{r}
+#creating a table for closures_df
+
+closures_table_df <- select(complete_schools_df, c(country, region, 
+                          fully_closed, partially_closed, internet_access,
+                          vac_priority_status, total_students, tv, radio, 
+                          online_learning, distance_learning))
+
+```
+
 
 ```{r}
 #Data wrangling for schoool closure map
-closures_df <- read_csv("covid_impact_education.csv")
+
 # Creating a month_year column
 sf <- stamp("02-2019", orders = "my") 
 closures_df$Date <- lubridate::dmy(closures_df$Date)
 closures_df <- closures_df %>%
-  mutate(month_year = sf(Date))
+  mutate(month_year = sf(Date)) %>%
+  filter(month_year != "02-2020")
 # Factoring Status
 is.factor(closures_df$Status)
 table(closures_df$Status)
