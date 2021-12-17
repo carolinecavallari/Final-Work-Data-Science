@@ -1,15 +1,34 @@
 
 ##Defining shiny dashboard components and publishing
 ```{r}
-ui <- fluidPage(titlePanel("COVID-19 School Closures Dashboard"),
-                fluidRow(column(
-                  2,
-                  wellPanel(
-                    selectInput(
+ui <- dashboardPage(
+    dashboardHeader(title = "School Closures during the Covid-19 Pandemic"),
+    
+    dashboardSidebar(
+        sidebarMenu(
+            menuItem("World Map and Scatterplot",
+                     tabName = "plots_tab",
+                     icon = icon("dashboard")),
+            menuItem("By Country Table",
+                     tabName = "table_tab",
+                     icon = icon("dashboard"))
+        )
+    ),
+    
+    dashboardBody(
+        tabItems(
+            tabItem(tabName = "plots_tab",
+                  fluidRow(box(span(h2("School Closure Totals"),
+                  textOutput("date"),
+                  textOutput("n_schools_closed"),
+                  textOutput("n_schools_partial"),
+                  textOutput("n_schools_open"),
+                  textOutput("n_schools_break"),
+             ))),
+                  fluidRow(box(width = 12, selectInput(
                       "month_select",
                       label = "Select the Month to show on the Map",
                       choices = c(
-                        "02-2020",
                         "03-2020",
                         "04-2020",
                         "05-2020",
@@ -33,24 +52,10 @@ ui <- fluidPage(titlePanel("COVID-19 School Closures Dashboard"),
                         "11-2021"
                       ),
                       selected = "11-2021"
-                    )),
-                  wellPanel(
-  #                   checkboxGroupInput("region", label = ("Select the region(s) for the
-  #                                                           scatterPlot"), 
-  #                              choices = list("All" = "all", 
-  #                               "East Asia and Pacific" = "East Asia and Pacific",
-  #                               "Eastern and Southern Africa" = "Eastern and Southern Africa",
-  #                               "Eastern Europe and Central Asia" = "Eastern Europe and Central Asia",
-  #                               "Latin America and Caribbean" = "Latin America and Caribbean",
-  #                               "Middle East and North Africa" = "Middle East and North Africa",
-  #                               "North America " = "North America ",
-  #                               "South Asia" = "South Asia",
-  #                               "West and Central Africa" = "West and Central Africa",
-  #                               "Western Europe"
-  #                              ),
-  #                               selected = "all"),
-  #                   hr(),
-  # fluidRow(column(3, verbatimTextOutput("value"))),
+                    ),
+                    plotlyOutput("fig", width = "100%"))),
+                  fluidRow(box(width = 12,
+                    plotlyOutput("plot2", width = "100%"),
                     selectInput(
                       "region",
                       label = "Select the Region for the ScatterPlot",
@@ -67,15 +72,13 @@ ui <- fluidPage(titlePanel("COVID-19 School Closures Dashboard"),
                         "Western Europe"
                       ),
                       selected = "all"
-                    ),
-                  )
-                ),
-column(10,
-       plotlyOutput("fig", width = "100%"),
-       plotlyOutput("plot2", width = "100%"),
-       DT::dataTableOutput("closures_table"))))
-
-
+                    ))
+                    )),
+            tabItem(tabName = "table_tab",
+                    DT::dataTableOutput("closures_table"))
+        )
+    ))
+    
 server <- function(input, output) {
   output$fig <- renderPlotly({
    
@@ -124,6 +127,43 @@ server <- function(input, output) {
     output$closures_table <- DT::renderDataTable(closures_table_df,
                                         options = list(scrollX = TRUE),
                                         rownames = FALSE)
+    
+    output$date <- renderText({
+      paste("On ", input$month_select)
+    })
+    
+    output$n_schools_closed <- renderText({
+      filteredClosed <- filter(closures_df, 
+                               month_year == input$month_select & 
+                                Status == "Closed due to COVID-19")
+  
+      paste("Countries with schools closed: ", length(unique(filteredClosed$Country)))
+    })
+      
+    output$n_schools_partial <- renderText({
+      filteredPartial <- filter(closures_df, 
+                               month_year == input$month_select & 
+                                Status == "Partially open")
+      
+      paste("Countries with schools partially closed: ",
+            length(unique(filteredPartial$Country)))
+    })
+    
+    output$n_schools_open <- renderText({
+      filteredOpen <- filter(closures_df, 
+                               month_year == input$month_select & 
+                                Status == "Fully open")
+      
+      paste("Countries with schools fully open: ", length(unique(filteredOpen$Country)))
+    })
+    
+    output$n_schools_break <- renderText({
+      filteredBreak <- filter(closures_df, 
+                               month_year == input$month_select & 
+                                Status == "Academic break")
+      
+      paste("Countries on academic break: ", length(unique(filteredBreak$Country)))
+    })
   
 }
 shinyApp(ui, server)
