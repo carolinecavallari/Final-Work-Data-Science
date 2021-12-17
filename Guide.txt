@@ -1,5 +1,10 @@
 Welcome to the COVID-19 International School Closures Dashboard!
 
 Here's the TL;DR:
++ You can use this dashboard to explore school closures by country over the course of the pandemic, as well as cumulative days of closed school. 
++ The first page contains a international map that displays which countries had fully closed schools, which were partially closed, which were open, and which were on academic break. Use the drop-down menu to change the month, and hover your cursor over the map to see the country names. 
++ The first page also contains a scatter plot that shows cumulative days of school closed against the percentage of internet access for school children. The idea is that schools with higher cumulative days of school closures and low internet connectivity are more vulnerable to learning loss. Use the drop-down menu to drill down by region, and click the vaccination priority legend to focus on countries that did or did not prioritize vaccination for teachers.
++ Interested in getting info on a specific country? Use the table on the second page. You can sort columns and search for a country. 
+
 
 
