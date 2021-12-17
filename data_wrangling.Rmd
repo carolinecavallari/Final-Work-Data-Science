@@ -9,37 +9,26 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-
-
-```{r}
+{r}
 # Creating a month_year column for the closures_df dataframe
 
+```{r}
 sf <- stamp("02-2019", orders = "my") 
 
 closures_df$Date <- lubridate::dmy(closures_df$Date)
 
 closures_df <- closures_df %>%
   mutate(month_year = sf(Date))
-
+```
+ 
 
 #school closure
 
+```{r}
 is.factor(closures_df$Status)
 table(closures_df$Status)
 closures_df$Status <- factor(closures_df$Status, levels = c("Closed due to COVID-19 ", "Partially open", "Fully open", "Academic break"))
-
-
-
-#creating a table for closures_df
-
-closures_table_df <- select(complete_schools_df, c(country, region, 
-                          fully_closed, partially_closed, internet_access,
-                          vac_priority_status, total_students, tv, radio, online_learning))
-
 ```
-
-
-
 
 
 ```{r}
@@ -52,6 +41,7 @@ is.factor(teacher_vac_df$vac_priority_status)
 table(teacher_vac_df$vac_priority_status)
 teacher_vac_df$vac_priority_status<- factor(teacher_vac_df$vac_priority_status, levels = c("Group 1", "Group 2", "Group 3 or lower", "Not prioritized", "Not specified", "No data"))
 ```
+
 
 
 ```{r}
@@ -80,7 +70,10 @@ names(Total_school_connectivity_df)[names(Total_school_connectivity_df) == "Coun
 names(Total_school_connectivity_df)[names(Total_school_connectivity_df) == "Sub-region"] <- "sub_region"
 names(Total_school_connectivity_df)[names(Total_school_connectivity_df) == "Income Group"] <- "income_group"
 names(Total_school_connectivity_df)[names(Total_school_connectivity_df) == "...12"] <- "Date"
+
+
 ```
+
 
 
 ```{r}
@@ -124,16 +117,24 @@ table(complete_schools_df$vac_priority_status)
 
 
 table(complete_schools_df$region)
-
-
 ```
 
 
 
+
+```{r}
+#creating a table for closures_df
+
+closures_table_df <- select(complete_schools_df, c(country, region, 
+                          fully_closed, partially_closed, internet_access,
+                          vac_priority_status, total_students))
+
+```
+
 ```{r}
 #Wrangling UNESCO Database for distance learning 
 
-names(UNESCO_school_closures_df)[names(UNESCO_school_closures_df) == "Country ID"] <- "country_id"
+names(UNESCO_school_closures_df)[names(UNESCO_school_closures_df) == "Country ID"] <- "ISO3"
 names(UNESCO_school_closures_df)[names(UNESCO_school_closures_df) == "Country"] <- "country"
 names(UNESCO_school_closures_df)[names(UNESCO_school_closures_df) == "Region 1"] <- "region"
 names(UNESCO_school_closures_df)[names(UNESCO_school_closures_df) == "Status"] <- "status"
@@ -145,16 +146,58 @@ names(UNESCO_school_closures_df)[names(UNESCO_school_closures_df) == "Distance l
 names(UNESCO_school_closures_df)[names(UNESCO_school_closures_df) == "Distance learning modalities (Global)"] <- "distance_learning"
 names(UNESCO_school_closures_df)[names(UNESCO_school_closures_df) == "Weeks partially open"] <- "weeks_partially_closed"  
 names(UNESCO_school_closures_df)[names(UNESCO_school_closures_df) == "Weeks fully closed"] <- "weeks_fully_closed"                                   
-head(UNESCO_school_closures_df)                                 
+head(UNESCO_school_closures_df)    
+
 
 UNESCO_school_closures_df <- UNESCO_school_closures_df %>%
-  select(., Date, country_id, country, region, status, enrollment, teachers_number, tv, radio, online_learning, distance_learning, weeks_partially_closed, weeks_fully_closed)
+  select(., Date, ISO3, country, region, status, enrollment, teachers_number, tv, radio, online_learning, distance_learning, weeks_partially_closed, weeks_fully_closed)
 
 
 UNESCO_school_closures_df$Date <- lubridate::ymd(UNESCO_school_closures_df$Date)
 
 typeof(UNESCO_school_closures_df$Date)
+```
 
 
+
+```{r}
+#Adding TV and Radio data 
+unesco_reduced <- filter(UNESCO_school_closures_df, UNESCO_school_closures_df$Date == "2021-10-31")%>%
+  select(., tv, radio, online_learning, distance_learning, ISO3)
+
+
+complete_schools_df <- dplyr::left_join(complete_schools_df,
+unesco_reduced, 
+  by = "ISO3" 
+  ) 
+```
+
+
+```{r}
+#Data wrangling for schoool closure map
+closures_df <- read_csv("covid_impact_education.csv")
+# Creating a month_year column
+sf <- stamp("02-2019", orders = "my") 
+closures_df$Date <- lubridate::dmy(closures_df$Date)
+closures_df <- closures_df %>%
+  mutate(month_year = sf(Date))
+# Factoring Status
+is.factor(closures_df$Status)
+table(closures_df$Status)
+closures_df$Status <- factor(closures_df$Status, levels = c("Closed due to COVID-19", "Partially open", "Fully open", "Academic break"))
+closures_df$test <- as.numeric(closures_df$Status)
+nfactor <- length(levels(closures_df$Status))
+foo <- brewer.pal(n = nfactor, name = "Set1")
+names(foo) <- levels(closures_df$Status)
+```
+
+
+```{r}
+#functions for graphs
+
+Z_Breaks = function(n){
+CUTS = seq(0,1,length.out=n+1)
+rep(CUTS,ifelse(CUTS %in% 0:1,1,2))
+}
 ```
 
