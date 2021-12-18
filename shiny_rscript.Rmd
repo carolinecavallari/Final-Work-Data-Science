@@ -118,17 +118,26 @@ server <- function(input, output) {
        aes(x = internet_access,
            y = fully_closed, 
            size = total_students,
-           color = vac_priority_status)) +
-   geom_point(alpha = 0.4) +
-    geom_text(aes(label = country), size = 3) +
-  xlim(0.0, 1.0) +
-  scale_x_reverse() +
+           color = vac_priority_status,
+            text = paste0(
+          "<b>", country, "</b><br>",
+          "Vacciation Group: ", vac_priority_status, "<br>",
+          "Connectivity: ", scales::percent(region_data$internet_access, 1)
+        )
+           )) +
+geom_point(show.legend = c(size = F)) +
+    geom_text(aes(label = country), nudge_y = -0.25, nudge_x = 100, show.legend = T, check_overlap = T) +
+  coord_cartesian(xlim = c(0.0, 1.0)) +
   labs(title = "A Brief Overview of Education Inequality during the Covid-19 Pandemic",
        x = "Connectivity rates per country",
-       y = "Days of school's full closure") +
+       y = "Days of school's full closure", 
+       color = "Teacher Priorization in Vaccination") +
         theme_minimal() +
-        guides(size = FALSE, scale = "none")
+    theme(panel.grid = element_line(linetype = 2)) +
+        guides(size = FALSE)
   
+  
+  ggplotly(plot2, tooltip = "text", height = 400)
 })
   
     output$closures_table <- DT::renderDataTable(closures_table_df,
