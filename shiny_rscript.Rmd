@@ -71,7 +71,7 @@ ui <- dashboardPage(
                         "Eastern Europe and Central Asia",
                         "Latin America and Caribbean",
                         "Middle East and North Africa",
-                        "North America ",
+                        "North America",
                         "South Asia",
                         "West and Central Africa",
                         "Western Europe"
@@ -235,16 +235,16 @@ server <- function(input, output) {
         plot2 <- ggplot(region_data,
                         aes(x = internet_access,
                             y = fully_closed, 
-                            size = total_students,
+                            size = total_students2,
                             text = paste0(
                                 "<b>", country, "</b><br>",
                                 "Vaccination Group: ", vac_priority_status, "<br>",
                                 "Connectivity: ", scales::percent(internet_access, 1), "<br>",
-                                "Total Students: ", total_students
+                                "Total Students in Millions: ", total_students2
                             )
                         )) +
             geom_point(aes(color = vac_priority_status), show.legend = c(size = F)) +
-            geom_text(aes(label = ifelse(total_students> 10000000, country, "")), 
+            geom_text(aes(label = ifelse(total_students2> 20, country, "")), 
                       nudge_y = 5, nudge_x = .03, show.legend = T, check_overlap = T) +
             coord_cartesian(xlim = c(0.0, 1.0)) +
             labs(y = "Cumulative days of full school closure", 
