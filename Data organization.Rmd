@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 #load packages
-pacman::p_load(haven, readxl, tidyverse, lubridate, readr, dplyr, knitr, rvest, tibble, broom, ggplot2, naniar, scales, shinydashboard, shiny, RColorBrewer, ggpubr, plotly, DT, sf, rsconnect, stringi, viridis, hrbrthemes)
+pacman::p_load(haven, readxl, tidyverse, lubridate, readr, dplyr, knitr, rvest, tibble, broom, ggplot2, naniar, scales, shinydashboard, shiny, RColorBrewer, ggpubr, plotly, DT, sf, rsconnect, stringi)
 
 
 
