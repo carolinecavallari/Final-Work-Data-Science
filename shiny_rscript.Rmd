@@ -225,40 +225,41 @@ server <- function(input, output) {
    })
 
   output$plot2 <- renderPlotly({
-  
-  region_data <- if(input$region != "all"){
-    filter(complete_schools_df, region == input$region)
-  } else {
-    complete_schools_df
-  }
-    
-  plot2 <- ggplot(region_data,
-       aes(x = internet_access,
-           y = fully_closed, 
-           size = total_students,
-           color = vac_priority_status,
-            text = paste0(
-          "<b>", country, "</b><br>",
-          "Vacciation Group: ", vac_priority_status, "<br>",
-          "Connectivity: ", scales::percent(region_data$internet_access, 1)
-        )
-           )) +
-geom_point(show.legend = c(size = F)) +
-    geom_text(aes(label = country), nudge_y = -0.25, nudge_x = 100, show.legend = T, check_overlap = T) +
-  coord_cartesian(xlim = c(0.0, 1.0)) +
-  labs(y = "Cumulative days of school's full closure", 
-       x = "% of School-age digital connectivity per Country",
-       color = "Teacher Priorization in Vaccination",
-       caption = "Explanation on the vaccination group methodology is available at the Guide tab",
-       title = "A Brief Overview of Education Inequality during the Covid-19 Pandemic",
-       subtitle = "Connectivity rate is reported as the percentage of school-age children that have access to internet\n and therefore remote learning, whereas cumulative days of closure\n showw how many days - on average - schools were fully closed in that country") +
-        theme_minimal() +
-    theme(panel.grid = element_line(linetype = 2)) +
-        guides(size = FALSE)
-
-
-  ggplotly(plot2, tooltip = "text", height = 400)
-})
+        
+        region_data <- if(input$region != "all"){
+            filter(complete_schools_df, region == input$region)
+        } else {
+            complete_schools_df
+        }
+        
+        plot2 <- ggplot(region_data,
+                        aes(x = internet_access,
+                            y = fully_closed, 
+                            size = total_students,
+                            text = paste0(
+                                "<b>", country, "</b><br>",
+                                "Vaccination Group: ", vac_priority_status, "<br>",
+                                "Connectivity: ", scales::percent(internet_access, 1), "<br>",
+                                "Total Students: ", total_students
+                            )
+                        )) +
+            geom_point(aes(color = vac_priority_status), show.legend = c(size = F)) +
+            geom_text(aes(label = ifelse(total_students> 10000000, country, "")), 
+                      nudge_y = 5, nudge_x = .03, show.legend = T, check_overlap = T) +
+            coord_cartesian(xlim = c(0.0, 1.0)) +
+            labs(y = "Cumulative days of full school closure", 
+                 x = "% of School-age digital connectivity per Country",
+                 color = "Teacher Priorization in Vaccination",
+                 caption = "Explanation on the vaccination group methodology is available at the Guide tab",
+                 title = "A Brief Overview of Education Inequality during the Covid-19 Pandemic",
+                 subtitle = "Connectivity rate is reported as the percentage of school-age children that have access to internet\n and therefore remote learning, whereas cumulative days of closure\n showw how many days - on average - schools were fully closed in that country") +
+            theme_minimal() +
+            theme(panel.grid = element_line(linetype = 2)) +
+            guides(size = FALSE)
+        
+        
+        ggplotly(plot2, tooltip = "text", height = 400)
+    })
   
     output$closures_table <- DT::renderDataTable(closures_table_df,
                                         options = list(scrollX = TRUE),

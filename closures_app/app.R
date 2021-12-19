@@ -417,21 +417,23 @@ server <- function(input, output) {
                         aes(x = internet_access,
                             y = fully_closed, 
                             size = total_students,
-                            color = vac_priority_status,
                             text = paste0(
                                 "<b>", country, "</b><br>",
                                 "Vaccination Group: ", vac_priority_status, "<br>",
-                                "Connectivity: ", scales::percent(region_data$internet_access, 1)
+                                "Connectivity: ", scales::percent(internet_access, 1), "<br>",
+                                "Total Students: ", total_students
                             )
                         )) +
-            geom_point(show.legend = c(size = F)) +
-            geom_text(aes(label = country), nudge_y = -0.25, nudge_x = 100, show.legend = T, check_overlap = T) +
+            geom_point(aes(color = vac_priority_status), show.legend = c(size = F)) +
+            geom_text(aes(label = ifelse(total_students> 10000000, country, "")), 
+                      nudge_y = 5, nudge_x = .03, show.legend = T, check_overlap = T) +
             coord_cartesian(xlim = c(0.0, 1.0)) +
-            labs(title = "A Brief Overview of Education Inequality during the Covid-19 Pandemic",
-                 x = "Connectivity rates per country",
-                 y = "Days of school's full closure", 
+            labs(y = "Cumulative days of full school closure", 
+                 x = "% of School-age digital connectivity per Country",
                  color = "Teacher Priorization in Vaccination",
-                 caption = "Explanation on the vaccination group is available at the Guide tab") +
+                 caption = "Explanation on the vaccination group methodology is available at the Guide tab",
+                 title = "A Brief Overview of Education Inequality during the Covid-19 Pandemic",
+                 subtitle = "Connectivity rate is reported as the percentage of school-age children that have access to internet\n and therefore remote learning, whereas cumulative days of closure\n showw how many days - on average - schools were fully closed in that country") +
             theme_minimal() +
             theme(panel.grid = element_line(linetype = 2)) +
             guides(size = FALSE)
