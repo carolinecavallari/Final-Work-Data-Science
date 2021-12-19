@@ -125,7 +125,7 @@ ui <- dashboardPage(
                       "Interested in getting info on a specific country? Use the table on the second page.",
                       "You can sort columns and search for a country and develop more specific analysis on which countries",
                       "had their school closed for over a month, whether their children are able to receive remote education,",
-                      "and which are the main distance learning tools used by country: TV, Radio or Internet"
+                      "and which are the main distance learning tools used by country: TV, Radio or Internet."
                     )
                       ),
                     box(
@@ -165,7 +165,7 @@ ui <- dashboardPage(
               with the general population; or a plan has not been developed."
               ),
               tags$p(
-                "• Missing data/ Not enough information: No information collected or available to make a determination."
+                "• Missing data: Not enough information: No information collected or available to make a determination."
               )
                     ),
               
@@ -196,12 +196,11 @@ ui <- dashboardPage(
                 tags$p(
                   "Wickham et al., (2019). Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686")
               )
-                )
-              )
-                )
-              )
-                    ))
+                    )
+            )
         )
+    )
+)
     
 
 
@@ -247,16 +246,17 @@ server <- function(input, output) {
 geom_point(show.legend = c(size = F)) +
     geom_text(aes(label = country), nudge_y = -0.25, nudge_x = 100, show.legend = T, check_overlap = T) +
   coord_cartesian(xlim = c(0.0, 1.0)) +
-  labs(title = "A Brief Overview of Education Inequality during the Covid-19 Pandemic",
-       x = "Connectivity rates per country",
-       y = "Days of school's full closure", 
+  labs(y = "Cumulative days of school's full closure", 
+       x = "% of School-age digital connectivity per Country",
        color = "Teacher Priorization in Vaccination",
-       caption = "Explanation on the vaccination group is available at the Guide tab") +
+       caption = "Explanation on the vaccination group methodology is available at the Guide tab",
+       title = "A Brief Overview of Education Inequality during the Covid-19 Pandemic",
+       subtitle = "Connectivity rate is reported as the percentage of school-age children that have access to internet\n and therefore remote learning, whereas cumulative days of closure\n showw how many days - on average - schools were fully closed in that country") +
         theme_minimal() +
     theme(panel.grid = element_line(linetype = 2)) +
         guides(size = FALSE)
-  
-  
+
+
   ggplotly(plot2, tooltip = "text", height = 400)
 })
   
