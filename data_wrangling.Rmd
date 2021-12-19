@@ -179,6 +179,11 @@ unesco_reduced,
 
 complete_schools_df <- complete_schools_df %>%
   drop_na("vac_priority_status")
+
+complete_schools_df <- complete_schools_df %>%
+  mutate(total_students2 = total_students/1000000) %>%
+  mutate(total_students2 = round(total_students2, 2))
+
 ```
 
 ```{r}
@@ -228,10 +233,4 @@ rep(CUTS,ifelse(CUTS %in% 0:1,1,2))
 ```
 
 
-
-
-
-```{r}
-class(complete_schools_df$total_students)
-```
 

@@ -19,22 +19,22 @@ pacman::p_load(haven, readxl, tidyverse, lubridate, readr, dplyr, knitr, rvest, 
 ```
 
 ```{r}
-#1. Enrollment Data
-enrollment_df <- read_excel("countries-enrollment-data-uis-sep-21.xlsx")
-
-#2. Covid19 Schools' Closure  information since February 2020
-closures_df <- read_csv("covid_impact_education.csv")
-
-#2.a Cumulative Schools Closure data
-cumulative_closure_df <- read_excel("School-Closures-Database-Final-1.xlsx", 2)
-
-#3. Total School Connectivity
-Total_school_connectivity_df <- read_excel("School-Age-Digital-Connectivity.xlsx", 2)
-
-#4. Teachers' vaccination data
-teacher_vac_df <- read_excel("covid-19-teacher-vaccination.xlsx", 1)
-
-#5. Updated UNESCO Database
-UNESCO_school_closures_df <- read_excel("UNESCO_school_closures_database.xlsx")
-
+  #1. Enrollment Data
+  enrollment_df <- read_excel("countries-enrollment-data-uis-sep-21.xlsx")
+  
+  #2. Covid19 Schools' Closure  information since February 2020
+  closures_df <- read_csv("covid_impact_education.csv")
+  
+  #2.a Cumulative Schools Closure data
+  cumulative_closure_df <- read_excel("School-Closures-Database-Final-1.xlsx", 2)
+  
+  #3. Total School Connectivity
+  Total_school_connectivity_df <- read_excel("School-Age-Digital-Connectivity.xlsx", 2)
+  
+  #4. Teachers' vaccination data
+  teacher_vac_df <- read_excel("covid-19-teacher-vaccination.xlsx", 1)
+  
+  #5. Updated UNESCO Database
+  UNESCO_school_closures_df <- read_excel("UNESCO_school_closures_database.xlsx")
+  
 ```
