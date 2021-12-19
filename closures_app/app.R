@@ -266,7 +266,122 @@ ui <- dashboardPage(
             tabItem(tabName = "table_tab",
                     DT::dataTableOutput("closures_table")),
             tabItem(tabName = "guide_tab",
-                    uiOutput("guide"))
+                    fluidRow(
+                        box(
+                            title = "The team",
+                            status = "primary",
+                            width = "6 col-lg-4",
+                            tags$p(class = "text-center", ),
+                            tags$p(class = "text-center",
+                                   tags$strong("Hi! We are Carol and Julia."), ),
+                            tags$p(
+                                "We are both MPP students at the Hertie School and for our Final IDS project and we created",
+                                "this dashboard to support students, journalists and NGOs to see the",
+                                "impact of school closure in different countries, according to their structure.",
+                                "Through this dashboard, students and journalists can see updated information on", 
+                                "education inequalities and can check data across time.", 
+                                "NGO leaders and workers can also use this information to see countries that were most affected by",
+                                "school closure and which of them should be prioritized to receive funds and support",
+                                "We hope you enjoy the work!",
+                            )
+                        ),
+                        box(
+                            title = "About the Dashboard",
+                            status = "primary",
+                            width = "6 col-lg-10",
+                            tags$p(class = "text-center", ),
+                            tags$p(class = "text-center", ),
+                            tags$p(
+                                "You can use this dashboard to explore school closures by country over the course of the pandemic,",
+                                "as well as cumulative days of closed school. It was developed using the shiny and shiny dashboard package.",
+                                "The first page contains an international map that displays which countries had fully closed schools,",
+                                "which were partially closed, which were open, and which were on academic break.",
+                                "Use the drop-down menu to change the month, and hover your cursor over the map to see the country names.",
+                            ),
+                            tags$p(
+                                "The first page also contains a scatter plot that shows cumulative days of school closed against the percentage of
+                    internet access for school children.",
+                                "The idea is that schools with higher cumulative days of school closures and low internet connectivity",
+                                "are more vulnerable to learning loss. Use the drop-down menu to drill down by region, and click the",
+                                "vaccination priority legend to focus on countries that did or did not prioritize vaccination for teachers.",
+                            ),
+                            tags$p(
+                                "Interested in getting info on a specific country? Use the table on the second page.",
+                                "You can sort columns and search for a country and develop more specific analysis on which countries",
+                                "had their school closed for over a month, whether their children are able to receive remote education,",
+                                "and which are the main distance learning tools used by country: TV, Radio or Internet"
+                            )
+                        ),
+                        box(
+                            title = "Data",
+                            status = "primary",
+                            width = "6 col-lg-10",
+                            tags$p(class = "text-center", ),
+                            tags$p(class = "text-center", ),
+                            tags$p(
+                                "The data was collected from UNESCO for school closure, teacher vaccination and connectivity,
+              as well as cumulative days of closed school. The map contains data on  closure and the data is updated until November 2021 by               UNESCO.",
+                                "The scatterplot contains three main data: cumulative school closure, collected from February 2020 until March 2021,",
+                                "school-age conencivity rates by country (88 countries were surveyed by UNESCO), and finally, data regarding
+              teacher vaccination priorization."
+                            ),
+                            tags$p(
+                                "The data on teacher vaccination priorization is organized as follows:"
+                            ),
+                            tags$p(
+                                "• Priority group 1: Teachers are prioritized in the first group with front-line workers, typically including health
+              workers, essential workers, elderly and other highly vulnerable groups."
+                            ),
+                            tags$p(
+                                "• Priority group 2: Teachers are prioritized in the second group to be vaccinated following front-line workers
+              typically including health workers, some essential workers, elderly and other highly vulnerable groups."
+                            ),
+                            tags$p(
+                                "• Priority group 3 or lower: Teachers are prioritized in the third group or lower down according to national
+              priorities."
+                            ),
+                            tags$p(
+                                "•Priority group unspecified: Teachers are prioritized in national COVID-19 vaccination rollout plans, but the level is
+              not specified or is unknown."
+                            ),
+                            tags$p(
+                                "• Not prioritized: Teachers are not identified as a priority group in national rollout plans and are to be vaccinated
+              with the general population; or a plan has not been developed."
+                            ),
+                            tags$p(
+                                "• Missing data/ Not enough information: No information collected or available to make a determination."
+                            )
+                        ),
+                        
+                        box(
+                            title = "References",
+                            status = "primary",
+                            width = "6 col-lg-10",
+                            tags$p(class = "text-center", ),
+                            tags$p(class = "text-center", ),
+                            tags$p(
+                                "UNESCO - Global Monitoring of School Closures Caused by the COVID-19 Pandemic:",
+                                HTML(paste0(
+                                    tags$a(
+                                        href = "http://covid19.uis.unesco.org/global-monitoring-school-closures-covid19",
+                                        "https://en.unesco.org/covid19/educationresponse/teacher-vaccination",
+                                        "https://data.unicef.org/topic/education/remote-learning-and-digital-connectivity"
+                                    )
+                                ))
+                            ),
+                            tags$p(
+                                "Winston Chang, Joe Cheng, JJ Allaire, Carson Sievert, Barret Schloerke, Yihui Xie, Jeff Allen, Jonathan McPherson, Alan
+              Dipert and Barbara Borges (2021). Shiny: Web Application Framework for R. R package version 1.7.",
+                            ),
+                            tags$p(
+                                "Hadley Wickham, Romain François, Lionel Henry and Kirill Müller (2021). Dplyr: A Grammar of Data Manipulation. R
+              package version 1.0.7.",
+                            ),
+                            tags$p(
+                                "Wickham et al., (2019). Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686")
+                        )
+                    )
+                    )
         )
     ))
 
@@ -302,25 +417,27 @@ server <- function(input, output) {
                         aes(x = internet_access,
                             y = fully_closed, 
                             size = total_students,
-                            color = vac_priority_status)) +
-            geom_point(alpha = 0.4) +
-            geom_text(aes(label = country), size = 3) +
-            xlim(0.0, 1.0) +
-            scale_x_reverse() +
+                            color = vac_priority_status,
+                            text = paste0(
+                                "<b>", country, "</b><br>",
+                                "Vaccination Group: ", vac_priority_status, "<br>",
+                                "Connectivity: ", scales::percent(region_data$internet_access, 1)
+                            )
+                        )) +
+            geom_point(show.legend = c(size = F)) +
+            geom_text(aes(label = country), nudge_y = -0.25, nudge_x = 100, show.legend = T, check_overlap = T) +
+            coord_cartesian(xlim = c(0.0, 1.0)) +
             labs(title = "A Brief Overview of Education Inequality during the Covid-19 Pandemic",
                  x = "Connectivity rates per country",
-                 y = "Days of school's full closure") +
+                 y = "Days of school's full closure", 
+                 color = "Teacher Priorization in Vaccination",
+                 caption = "Explanation on the vaccination group is available at the Guide tab") +
             theme_minimal() +
-            guides(size = FALSE, scale = "none")
+            theme(panel.grid = element_line(linetype = 2)) +
+            guides(size = FALSE)
         
-    })
-    
-    output$closures_table <- DT::renderDataTable(closures_table_df,
-                                                 options = list(scrollX = TRUE),
-                                                 rownames = FALSE)
-    
-    output$date <- renderText({
-        paste("On ", input$month_select)
+        
+        ggplotly(plot2, tooltip = "text", height = 400)
     })
     
     output$n_schools_closed <- renderText({
@@ -354,6 +471,14 @@ server <- function(input, output) {
                                     Status == "Academic break")
         
         paste("Countries on academic break: ", length(unique(filteredBreak$Country)))
+    })
+    
+    output$closures_table <- DT::renderDataTable(closures_table_df,
+                                                 options = list(scrollX = TRUE),
+                                                 rownames = FALSE)
+    
+    output$date <- renderText({
+        paste("On ", input$month_select)
     })
     
     output$guide <- renderUI({
