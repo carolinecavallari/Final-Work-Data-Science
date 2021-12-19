@@ -3,8 +3,8 @@
 ```{r}
 ui <- dashboardPage(
     dashboardHeader(
-      title = "School Closures during the Covid-19 Pandemic",
-      titleWidth = 450),
+        title = "School Closures during the Covid-19 Pandemic",
+        titleWidth = 450),
     
     dashboardSidebar(
         sidebarMenu(
@@ -23,208 +23,261 @@ ui <- dashboardPage(
     dashboardBody(
         tabItems(
             tabItem(tabName = "plots_tab",
-                  fluidRow(box(span(h2("School Closure Totals"),
-                  textOutput("date"),
-                  textOutput("n_schools_closed"),
-                  textOutput("n_schools_partial"),
-                  textOutput("n_schools_open"),
-                  textOutput("n_schools_break"),
-             ))),
-                  fluidRow(box(width = 12, selectInput(
-                      "month_select",
-                      label = "Select the Month to show on the Map",
-                      choices = c(
-                        "03-2020",
-                        "04-2020",
-                        "05-2020",
-                        "06-2020",
-                        "07-2020",
-                        "08-2020",
-                        "09-2020",
-                        "10-2020",
-                        "11-2020",
-                        "12-2020",
-                        "01-2021",
-                        "02-2021",
-                        "03-2021",
-                        "04-2021",
-                        "05-2021",
-                        "06-2021",
-                        "07-2021",
-                        "08-2021",
-                        "09-2021",
-                        "10-2021",
-                        "11-2021"
-                      ),
-                      selected = "11-2021"
+                    fluidRow(box(span(h3("School Closure Totals - By Month"),
+                                      textOutput("date"),
+                                      textOutput("n_schools_closed"),
+                                      textOutput("n_schools_partial"),
+                                      textOutput("n_schools_open"),
+                                      textOutput("n_schools_break"),
+                    ))),
+                    fluidRow(box(width = 12, selectInput(
+                        "month_select",
+                        label = "Select the Month to show on the Map",
+                        choices = c(
+                            "03-2020",
+                            "04-2020",
+                            "05-2020",
+                            "06-2020",
+                            "07-2020",
+                            "08-2020",
+                            "09-2020",
+                            "10-2020",
+                            "11-2020",
+                            "12-2020",
+                            "01-2021",
+                            "02-2021",
+                            "03-2021",
+                            "04-2021",
+                            "05-2021",
+                            "06-2021",
+                            "07-2021",
+                            "08-2021",
+                            "09-2021",
+                            "10-2021",
+                            "11-2021"
+                        ),
+                        selected = "11-2021"
                     ),
                     plotlyOutput("fig", width = "100%"))),
-                  fluidRow(box(width = 12,
-                    plotlyOutput("plot2", width = "100%"),
-                    selectInput(
-                      "region",
-                      label = "Select the Region for the ScatterPlot",
-                      choices = c(
-                        "all",
-                        "East Asia and Pacific",
-                        "Eastern and Southern Africa",
-                        "Eastern Europe and Central Asia",
-                        "Latin America and Caribbean",
-                        "Middle East and North Africa",
-                        "North America",
-                        "South Asia",
-                        "West and Central Africa",
-                        "Western Europe"
-                      ),
-                      selected = "all"
-                    ))
+                    fluidRow(box(width = 12,
+                                 plotlyOutput("plot2", width = "100%"),
+                                 selectInput(
+                                     "region",
+                                     label = "Select the Region for the ScatterPlot",
+                                     choices = c(
+                                         "all",
+                                         "East Asia and Pacific",
+                                         "Eastern and Southern Africa",
+                                         "Eastern Europe and Central Asia",
+                                         "Latin America and Caribbean",
+                                         "Middle East and North Africa",
+                                         "North America",
+                                         "South Asia",
+                                         "West and Central Africa",
+                                         "Western Europe"
+                                     ),
+                                     selected = "all"
+                                 ))
                     )),
             tabItem(tabName = "table_tab",
                     DT::dataTableOutput("closures_table")),
             tabItem(tabName = "guide_tab",
                     fluidRow(
-                      box(
-                        title = "The team",
-                        status = "primary",
-                        width = "6 col-lg-4",
-                        tags$p(class = "text-center", ),
-                        tags$p(class = "text-center",
-                               tags$strong("Hi! We are Carol and Julia."), ),
+                        box(
+                            title = "The team",
+                            status = "primary",
+                            width = "6 col-lg-4",
+                            tags$p(class = "text-center", ),
+                            tags$p(class = "text-center",
+                                   tags$strong("Hi! We are Carol and Julia."), ),
+                            tags$p(
+                                "We are both MPP students at the Hertie School and for our Final IDS project and we created",
+                                "this dashboard to support students, journalists and NGOs to see the",
+                                "impact of school closure in different countries, according to their structure.",
+                                "Through this dashboard, students and journalists can see updated information on", 
+                                "education inequalities and can check data across time.", 
+                                "NGO leaders and workers can also use this information to see countries that were most affected by",
+                                "school closure and which of them should be prioritized to receive funds and support",
+                                "We hope you enjoy the work!",
+                            )
+                        ),
+                        box(
+                            title = "Motivation",
+                            status = "primary",
+                            width = "6 col-lg-8",
+                            tags$p(class = "text-center", ),
+                            tags$p(
+                        "The COVID-19 pandemic has significantly affected children all over the world. 
+                        Due to the high infection rates, many countries faced school closures which directly impacted 
+                        not only learning outcomes, but also the enrollment of children in school. According to data 
+                        from UNESCO, in the peak of the pandemic in April last year, over 1 billion students all over 
+                        the world were affected by school closures, accounting for over 70% of all learners in the world, 
+                        with over 100 countries having full closures of their schools."
+                        ),
                         tags$p(
-                          "We are both MPP students at the Hertie School and for our Final IDS project and we created",
-                          "this dashboard to support students, journalists and NGOs to see the",
-                          "impact of school closure in different countries, according to their structure.",
-                          "Through this dashboard, students and journalists can see updated information on", 
-                          "education inequalities and can check data across time.", 
-                          "NGO leaders and workers can also use this information to see countries that were most affected by",
-                          "school closure and which of them should be prioritized to receive funds and support",
-                          "We hope you enjoy the work!",
+                        "Despite the school closure being a problem faced by all countries, it has impacted 
+                        school-age children differently due to pre-existing differences in terms of basic infrastructure 
+                        at households - such as internet access. The fact that millions of children did not have access 
+                        to computers and internet in their homes made it extremely difficult for some countries to 
+                        adapt their strategy and adopt distance learning practices."
+                        ),
+                        tags$p(
+                            "One way found by many countries to rapidly go back to on-site learning was to 
+                            prioritize nationwide vaccination rollouts for teachers. Many countries that prioritized 
+                            teachers in group 1, for instance, such as Chile have allowed them to vaccinate most of 
+                            their teacher by the time the school year started."
+                        ),
+                        tags$p(
+                        "While going back on-site was not possible in many countries, different distance-learning 
+                        policies were adopted to mitigate the effects of school-closure such as broadcasting classes 
+                        though national and local radios and televisions or offering live classes through the internet. 
+                        In developing regions such as Latin America, most students were reached through television 
+                        broadcasting, 	while in Eastern Europe, children mostly adopted internet/computer tools."
+                        ),
+                        tags$p(
+                        "To better understand the educational scenario in the world today, we have developed this 
+                        dashboard to be used by students, reporters and especially NGO workers and leaders. Students and 
+                        reporter can make use of this data to write journalistic pieces, schoolwork and articles that will 
+                        help to show how the inequality in education is differently affecting countries. NGO workers and 
+                        leaders can use this dashboard to define priorities in their projects, by analyzing countries that 
+                        were most affected by full school closures and which type of distance learning policy was adopted by 
+                        them and could be improved (Tv, radio, internet)."
                         )
-                      ),
-                      box(
-                        title = "About the Dashboard",
-                        status = "primary",
-                        width = "6 col-lg-10",
-                        tags$p(class = "text-center", ),
-                        tags$p(class = "text-center", ),
-                        tags$p(
-                          "You can use this dashboard to explore school closures by country over the course of the pandemic,",
-                          "as well as cumulative days of closed school. It was developed using the shiny and shiny dashboard package.",
-                          "The first page contains an international map that displays which countries had fully closed schools,",
-                          "which were partially closed, which were open, and which were on academic break.",
-                          "Use the drop-down menu to change the month, and hover your cursor over the map to see the country names.",
-                        ),
-                        tags$p(
-                          "The first page also contains a scatter plot that shows cumulative days of school closed against the percentage of
+                        )),
+                    fluidRow(
+                        box(
+                            title = "About the Dashboard",
+                            status = "primary",
+                            width = "6 col-lg-6",
+                            tags$p(class = "text-center", ),
+                            tags$p(class = "text-center", ),
+                            tags$p(
+                                "You can use this dashboard to explore school closures by country over the course of the pandemic,",
+                                "as well as cumulative days of closed school. It was developed using the shiny and shiny dashboard package.",
+                                "The first page contains an international map that displays which countries had fully closed schools,",
+                                "which were partially closed, which were open, and which were on academic break.",
+                                "Use the drop-down menu to change the month, and hover your cursor over the map to see the country names.",
+                            ),
+                            tags$p(
+                                "The first page also contains a scatter plot that shows cumulative days of school closed against the percentage of
                     internet access for school children.",
-                    "The idea is that schools with higher cumulative days of school closures and low internet connectivity",
-                    "are more vulnerable to learning loss. Use the drop-down menu to drill down by region, and click the",
-                    "vaccination priority legend to focus on countries that did or did not prioritize vaccination for teachers.",
+                                "The idea is that schools with higher cumulative days of school closures and low internet connectivity",
+                                "are more vulnerable to learning loss. Use the drop-down menu to drill down by region, and click the",
+                                "vaccination priority legend to focus on countries that did or did not prioritize vaccination for teachers.",
+                            ),
+                            tags$p(
+                                "Interested in getting info on a specific country? Use the table on the second page.",
+                                "You can sort columns and search for a country and develop more specific analysis on which countries",
+                                "had their school closed for over a month, whether their children are able to receive remote education,",
+                                "and which are the main distance learning tools used by country: TV, Radio or Internet"
+                            ),
+                            tags$p(
+                                "A couple example insights you can gather from the dashboard: "
+                                ),
+                            tags$p(
+                                "• If you set the region to Eastern and Southern Africa on the scatterplot, you can see very high cumulative 
+                                school closures and no country having more than a ~30% internet connectivity rate. Any intervention policy
+                                would need to take limited connectivity into account."
+                                ),
+                            tags$p(
+                                "• If you explore a few different months in the school closures map, you'll discover that the US 
+                                never implemented full school closures, reflecting the state- and locally-driven education systems."
+                            )
                         ),
-                    tags$p(
-                      "Interested in getting info on a specific country? Use the table on the second page.",
-                      "You can sort columns and search for a country and develop more specific analysis on which countries",
-                      "had their school closed for over a month, whether their children are able to receive remote education,",
-                      "and which are the main distance learning tools used by country: TV, Radio or Internet."
-                    )
-                      ),
-                    box(
-                      title = "Data",
-                      status = "primary",
-                      width = "6 col-lg-10",
-                      tags$p(class = "text-center", ),
-                      tags$p(class = "text-center", ),
-                      tags$p(
-                        "The data was collected from UNESCO for school closure, teacher vaccination and connectivity,
+                        box(
+                            title = "Data",
+                            status = "primary",
+                            width = "6 col-lg-6",
+                            tags$p(class = "text-center", ),
+                            tags$p(class = "text-center", ),
+                            tags$p(
+                                "The data was collected from UNESCO for school closure, teacher vaccination and connectivity,
               as well as cumulative days of closed school. The map contains data on  closure and the data is updated until November 2021 by               UNESCO.",
-              "The scatterplot contains three main data: cumulative school closure, collected from February 2020 until March 2021,",
-              "school-age conencivity rates by country (88 countries were surveyed by UNESCO), and finally, data regarding
+                                "The scatterplot contains three main data: cumulative school closure, collected from February 2020 until March 2021,",
+                                "school-age connectivity rates by country (88 countries were surveyed by UNESCO), and finally, data regarding
               teacher vaccination priorization."
-                      ),
-              tags$p(
-                "The data on teacher vaccination priorization is organized as follows:"
-              ),
-              tags$p(
-                "• Priority group 1: Teachers are prioritized in the first group with front-line workers, typically including health
+                            ),
+                            tags$p(
+                                "The data on teacher vaccination priorization is organized as follows:"
+                            ),
+                            tags$p(
+                                "• Priority group 1: Teachers are prioritized in the first group with front-line workers, typically including health
               workers, essential workers, elderly and other highly vulnerable groups."
-              ),
-              tags$p(
-                "• Priority group 2: Teachers are prioritized in the second group to be vaccinated following front-line workers
+                            ),
+                            tags$p(
+                                "• Priority group 2: Teachers are prioritized in the second group to be vaccinated following front-line workers
               typically including health workers, some essential workers, elderly and other highly vulnerable groups."
-              ),
-              tags$p(
-                "• Priority group 3 or lower: Teachers are prioritized in the third group or lower down according to national
+                            ),
+                            tags$p(
+                                "• Priority group 3 or lower: Teachers are prioritized in the third group or lower down according to national
               priorities."
-              ),
-              tags$p(
-                "•Priority group unspecified: Teachers are prioritized in national COVID-19 vaccination rollout plans, but the level is
+                            ),
+                            tags$p(
+                                "•Priority group unspecified: Teachers are prioritized in national COVID-19 vaccination rollout plans, but the level is
               not specified or is unknown."
-              ),
-              tags$p(
-                "• Not prioritized: Teachers are not identified as a priority group in national rollout plans and are to be vaccinated
+                            ),
+                            tags$p(
+                                "• Not prioritized: Teachers are not identified as a priority group in national rollout plans and are to be vaccinated
               with the general population; or a plan has not been developed."
-              ),
-              tags$p(
-                "• Missing data: Not enough information: No information collected or available to make a determination."
-              )
-                    ),
-              
-              box(
-                title = "References",
-                status = "primary",
-                width = "6 col-lg-10",
-                tags$p(class = "text-center", ),
-                tags$p(class = "text-center", ),
-                tags$p(
-                  "UNESCO - Global Monitoring of School Closures Caused by the COVID-19 Pandemic:",
-                  HTML(paste0(
-                    tags$a(
-                      href = "http://covid19.uis.unesco.org/global-monitoring-school-closures-covid19",
-                      "https://en.unesco.org/covid19/educationresponse/teacher-vaccination",
-                      "https://data.unicef.org/topic/education/remote-learning-and-digital-connectivity"
-                    )
-                  ))
-                ),
-                tags$p(
-                  "Winston Chang, Joe Cheng, JJ Allaire, Carson Sievert, Barret Schloerke, Yihui Xie, Jeff Allen, Jonathan McPherson, Alan
+                            ),
+                            tags$p(
+                                "• Missing data/ Not enough information: No information collected or available to make a determination."
+                            )
+                        )),
+                    fluidRow(  
+                        box(
+                            title = "References",
+                            status = "primary",
+                            width = "6 col-lg-10",
+                            tags$p(class = "text-center", ),
+                            tags$p(class = "text-center", ),
+                            tags$p(
+                                "UNESCO - Global Monitoring of School Closures Caused by the COVID-19 Pandemic:",
+                                HTML(paste0(
+                                    tags$a(
+                                        href = "http://covid19.uis.unesco.org/global-monitoring-school-closures-covid19",
+                                        "https://en.unesco.org/covid19/educationresponse/teacher-vaccination",
+                                        "https://data.unicef.org/topic/education/remote-learning-and-digital-connectivity"
+                                    )
+                                ))
+                            ),
+                            tags$p(
+                                "Winston Chang, Joe Cheng, JJ Allaire, Carson Sievert, Barret Schloerke, Yihui Xie, Jeff Allen, Jonathan McPherson, Alan
               Dipert and Barbara Borges (2021). Shiny: Web Application Framework for R. R package version 1.7.",
-                ),
-                tags$p(
-                  "Hadley Wickham, Romain François, Lionel Henry and Kirill Müller (2021). Dplyr: A Grammar of Data Manipulation. R
+                            ),
+                            tags$p(
+                                "Hadley Wickham, Romain François, Lionel Henry and Kirill Müller (2021). Dplyr: A Grammar of Data Manipulation. R
               package version 1.0.7.",
-                ),
-                tags$p(
-                  "Wickham et al., (2019). Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686")
-              )
+                            ),
+                            tags$p(
+                                "Wickham et al., (2019). Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686")
+                        )
+                    ))
                     )
-            )
         )
     )
-)
-    
-
 
 server <- function(input, output) {
-  output$fig <- renderPlotly({
-   
-  filteredData <- filter(closures_df, month_year == input$month_select)
-  
-  colorScale <- data.frame(z=Z_Breaks(nfactor),
-        col=rep(foo,each=2),stringsAsFactors=FALSE)
-  
-  fig <- plot_ly(filteredData, 
-         type='choropleth', 
-         locations= ~ISO, 
-         z=filteredData$test, 
-         text=filteredData$Country,
-         colorscale=colorScale,
-  colorbar=list(tickvals=1:nfactor, ticktext=names(foo))
-  )
-  
-  fig
-   })
-
-  output$plot2 <- renderPlotly({
+    output$fig <- renderPlotly({
+        
+        filteredData <- filter(closures_df, month_year == input$month_select)
+        
+        colorScale <- data.frame(z=Z_Breaks(nfactor),
+                                 col=rep(foo,each=2),stringsAsFactors=FALSE)
+        
+        fig <- plot_ly(filteredData, 
+                       type='choropleth', 
+                       locations= ~ISO, 
+                       z=filteredData$test, 
+                       text=filteredData$Country,
+                       colorscale=colorScale,
+                       colorbar=list(tickvals=1:nfactor, ticktext=names(foo))
+        )
+        
+        fig
+    })
+    
+    output$plot2 <- renderPlotly({
         
         region_data <- if(input$region != "all"){
             filter(complete_schools_df, region == input$region)
@@ -244,7 +297,7 @@ server <- function(input, output) {
                             )
                         )) +
             geom_point(aes(color = vac_priority_status), show.legend = c(size = F)) +
-            geom_text(aes(label = ifelse(total_students2> 20, country, "")), 
+            geom_text(aes(label = ifelse(total_students2> 10, country, "")), 
                       nudge_y = 5, nudge_x = .03, show.legend = T, check_overlap = T) +
             coord_cartesian(xlim = c(0.0, 1.0)) +
             labs(y = "Cumulative days of full school closure", 
@@ -260,56 +313,47 @@ server <- function(input, output) {
         
         ggplotly(plot2, tooltip = "text", height = 400)
     })
-  
-    output$closures_table <- DT::renderDataTable(closures_table_df,
-                                        options = list(scrollX = TRUE),
-                                        rownames = FALSE)
-    
-    output$date <- renderText({
-      paste("On ", input$month_select)
-    })
     
     output$n_schools_closed <- renderText({
-      filteredClosed <- filter(closures_df, 
-                               month_year == input$month_select & 
-                                Status == "Closed due to COVID-19")
-  
-      paste("Countries with schools closed: ", length(unique(filteredClosed$Country)))
+        filteredClosed <- filter(closures_df, 
+                                 month_year == input$month_select & 
+                                     Status == "Closed due to COVID-19")
+        
+        paste("Countries with schools closed: ", length(unique(filteredClosed$Country)))
     })
-      
+    
     output$n_schools_partial <- renderText({
-      filteredPartial <- filter(closures_df, 
-                               month_year == input$month_select & 
-                                Status == "Partially open")
-      
-      paste("Countries with schools partially closed: ",
-            length(unique(filteredPartial$Country)))
+        filteredPartial <- filter(closures_df, 
+                                  month_year == input$month_select & 
+                                      Status == "Partially open")
+        
+        paste("Countries with schools partially closed: ",
+              length(unique(filteredPartial$Country)))
     })
     
     output$n_schools_open <- renderText({
-      filteredOpen <- filter(closures_df, 
+        filteredOpen <- filter(closures_df, 
                                month_year == input$month_select & 
-                                Status == "Fully open")
-      
-      paste("Countries with schools fully open: ", length(unique(filteredOpen$Country)))
+                                   Status == "Fully open")
+        
+        paste("Countries with schools fully open: ", length(unique(filteredOpen$Country)))
     })
     
     output$n_schools_break <- renderText({
-      filteredBreak <- filter(closures_df, 
-                               month_year == input$month_select & 
-                                Status == "Academic break")
-      
-      paste("Countries on academic break: ", length(unique(filteredBreak$Country)))
+        filteredBreak <- filter(closures_df, 
+                                month_year == input$month_select & 
+                                    Status == "Academic break")
+        
+        paste("Countries on academic break: ", length(unique(filteredBreak$Country)))
     })
     
-    output$guide <- renderUI({
-      paste("Welcome to our dashboard!")
-      rawText <- readLines("Guide.txt")
-     splitText <- stringi::stri_split(str = rawText, regex = '\n')
-      replacedText <- lapply(splitText, p)
-      return(replacedText)
+    output$closures_table <- DT::renderDataTable(closures_table_df,
+                                                 options = list(scrollX = TRUE),
+                                                 rownames = FALSE)
+    
+    output$date <- renderText({
+        paste("On ", input$month_select)
     })
-  
 }
 shinyApp(ui, server)
 ```
