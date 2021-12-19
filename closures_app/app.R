@@ -7,13 +7,15 @@
 #    http://shiny.rstudio.com/
 #
 
-library(shiny)
+
 ########################
 ## Data Organizations ##
 ########################
 
 #load packages
-pacman::p_load(haven, readxl, tidyverse, lubridate, readr, dplyr, knitr, rvest, tibble, broom, ggplot2, naniar, scales, shinydashboard, shiny, RColorBrewer, ggpubr, plotly, DT, sf, rsconnect)
+pacman::p_load(haven, readxl, tidyverse, lubridate, readr, dplyr, knitr, 
+               rvest, tibble, broom, ggplot2, naniar, scales, shinydashboard, 
+               shiny, RColorBrewer, ggpubr, plotly, DT, sf, rsconnect)
 
 #1. Enrollment Data
 enrollment_df <- read_excel("countries-enrollment-data-uis-sep-21.xlsx")
@@ -160,7 +162,11 @@ unesco_reduced <- filter(UNESCO_school_closures_df, UNESCO_school_closures_df$Da
 complete_schools_df <- dplyr::left_join(complete_schools_df,
                                         unesco_reduced, 
                                         by = "ISO3" 
-) 
+)
+
+complete_schools_df <- complete_schools_df %>%
+    mutate(total_students2 = total_students/1000000) %>%
+    mutate(total_students2 = round(total_students2, 2))
 
 #creating a table for closures_df
 
@@ -168,7 +174,7 @@ closures_table_df <- select(complete_schools_df, c(country, region,
                                                    fully_closed, partially_closed, internet_access,
                                                    vac_priority_status, total_students, tv, radio, 
                                                    online_learning, distance_learning))
-
+closures_table_df$internet_access <- round(closures_table_df$internet_access, 3)
 
 
 
@@ -207,7 +213,7 @@ ui <- dashboardPage(
     dashboardBody(
         tabItems(
             tabItem(tabName = "plots_tab",
-                    fluidRow(box(span(h2("School Closure Totals"),
+                    fluidRow(box(span(h3("School Closure Totals - By Month"),
                                       textOutput("date"),
                                       textOutput("n_schools_closed"),
                                       textOutput("n_schools_partial"),
@@ -286,9 +292,53 @@ ui <- dashboardPage(
                             )
                         ),
                         box(
+                            title = "Motivation",
+                            status = "primary",
+                            width = "6 col-lg-8",
+                            tags$p(class = "text-center", ),
+                            tags$p(
+                        "The COVID-19 pandemic has significantly affected children all over the world. 
+                        Due to the high infection rates, many countries faced school closures which directly impacted 
+                        not only learning outcomes, but also the enrollment of children in school. According to data 
+                        from UNESCO, in the peak of the pandemic in April last year, over 1 billion students all over 
+                        the world were affected by school closures, accounting for over 70% of all learners in the world, 
+                        with over 100 countries having full closures of their schools."
+                        ),
+                        tags$p(
+                        "Despite the school closure being a problem faced by all countries, it has impacted 
+                        school-age children differently due to pre-existing differences in terms of basic infrastructure 
+                        at households - such as internet access. The fact that millions of children did not have access 
+                        to computers and internet in their homes made it extremely difficult for some countries to 
+                        adapt their strategy and adopt distance learning practices."
+                        ),
+                        tags$p(
+                            "One way found by many countries to rapidly go back to on-site learning was to 
+                            prioritize nationwide vaccination rollouts for teachers. Many countries that prioritized 
+                            teachers in group 1, for instance, such as Chile have allowed them to vaccinate most of 
+                            their teacher by the time the school year started."
+                        ),
+                        tags$p(
+                        "While going back on-site was not possible in many countries, different distance-learning 
+                        policies were adopted to mitigate the effects of school-closure such as broadcasting classes 
+                        though national and local radios and televisions or offering live classes through the internet. 
+                        In developing regions such as Latin America, most students were reached through television 
+                        broadcasting, 	while in Eastern Europe, children mostly adopted internet/computer tools."
+                        ),
+                        tags$p(
+                        "To better understand the educational scenario in the world today, we have developed this 
+                        dashboard to be used by students, reporters and especially NGO workers and leaders. Students and 
+                        reporter can make use of this data to write journalistic pieces, schoolwork and articles that will 
+                        help to show how the inequality in education is differently affecting countries. NGO workers and 
+                        leaders can use this dashboard to define priorities in their projects, by analyzing countries that 
+                        were most affected by full school closures and which type of distance learning policy was adopted by 
+                        them and could be improved (Tv, radio, internet)."
+                        )
+                        )),
+                    fluidRow(
+                        box(
                             title = "About the Dashboard",
                             status = "primary",
-                            width = "6 col-lg-10",
+                            width = "6 col-lg-6",
                             tags$p(class = "text-center", ),
                             tags$p(class = "text-center", ),
                             tags$p(
@@ -310,19 +360,31 @@ ui <- dashboardPage(
                                 "You can sort columns and search for a country and develop more specific analysis on which countries",
                                 "had their school closed for over a month, whether their children are able to receive remote education,",
                                 "and which are the main distance learning tools used by country: TV, Radio or Internet"
+                            ),
+                            tags$p(
+                                "A couple example insights you can gather from the dashboard: "
+                                ),
+                            tags$p(
+                                "• If you set the region to Eastern and Southern Africa on the scatterplot, you can see very high cumulative 
+                                school closures and no country having more than a ~30% internet connectivity rate. Any intervention policy
+                                would need to take limited connectivity into account."
+                                ),
+                            tags$p(
+                                "• If you explore a few different months in the school closures map, you'll discover that the US 
+                                never implemented full school closures, reflecting the state- and locally-driven education systems."
                             )
                         ),
                         box(
                             title = "Data",
                             status = "primary",
-                            width = "6 col-lg-10",
+                            width = "6 col-lg-6",
                             tags$p(class = "text-center", ),
                             tags$p(class = "text-center", ),
                             tags$p(
                                 "The data was collected from UNESCO for school closure, teacher vaccination and connectivity,
               as well as cumulative days of closed school. The map contains data on  closure and the data is updated until November 2021 by               UNESCO.",
                                 "The scatterplot contains three main data: cumulative school closure, collected from February 2020 until March 2021,",
-                                "school-age conencivity rates by country (88 countries were surveyed by UNESCO), and finally, data regarding
+                                "school-age connectivity rates by country (88 countries were surveyed by UNESCO), and finally, data regarding
               teacher vaccination priorization."
                             ),
                             tags$p(
@@ -351,8 +413,8 @@ ui <- dashboardPage(
                             tags$p(
                                 "• Missing data/ Not enough information: No information collected or available to make a determination."
                             )
-                        ),
-                        
+                        )),
+                    fluidRow(  
                         box(
                             title = "References",
                             status = "primary",
@@ -380,10 +442,10 @@ ui <- dashboardPage(
                             tags$p(
                                 "Wickham et al., (2019). Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686")
                         )
-                    )
+                    ))
                     )
         )
-    ))
+    )
 
 server <- function(input, output) {
     output$fig <- renderPlotly({
@@ -416,16 +478,16 @@ server <- function(input, output) {
         plot2 <- ggplot(region_data,
                         aes(x = internet_access,
                             y = fully_closed, 
-                            size = total_students,
+                            size = total_students2,
                             text = paste0(
                                 "<b>", country, "</b><br>",
                                 "Vaccination Group: ", vac_priority_status, "<br>",
                                 "Connectivity: ", scales::percent(internet_access, 1), "<br>",
-                                "Total Students: ", total_students
+                                "Total Students in Millions: ", total_students2
                             )
                         )) +
             geom_point(aes(color = vac_priority_status), show.legend = c(size = F)) +
-            geom_text(aes(label = ifelse(total_students> 10000000, country, "")), 
+            geom_text(aes(label = ifelse(total_students2> 10, country, "")), 
                       nudge_y = 5, nudge_x = .03, show.legend = T, check_overlap = T) +
             coord_cartesian(xlim = c(0.0, 1.0)) +
             labs(y = "Cumulative days of full school closure", 
@@ -482,15 +544,6 @@ server <- function(input, output) {
     output$date <- renderText({
         paste("On ", input$month_select)
     })
-    
-    output$guide <- renderUI({
-        paste("Welcome to our dashboard!")
-        rawText <- readLines("Guide.txt")
-        splitText <- stringi::stri_split(str = rawText, regex = '\n')
-        replacedText <- lapply(splitText, p)
-        return(replacedText)
-    })
-    
 }
 shinyApp(ui, server)
 

@@ -5,9 +5,9 @@ account: julia-ellingwood
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 5341858
-bundleId: 5389850
+bundleId: 5390253
 url: https://julia-ellingwood.shinyapps.io/closures_app/
-when: 1639908743.56703
-lastSyncTime: 1639908743.56704
+when: 1639920606.17746
+lastSyncTime: 1639920606.17748
 asMultiple: FALSE
 asStatic: FALSE
