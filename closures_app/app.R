@@ -255,7 +255,7 @@ ui <- dashboardPage(
                                          "Eastern Europe and Central Asia",
                                          "Latin America and Caribbean",
                                          "Middle East and North Africa",
-                                         "North America ",
+                                         "North America",
                                          "South Asia",
                                          "West and Central Africa",
                                          "Western Europe"
@@ -366,3 +366,4 @@ server <- function(input, output) {
     
 }
 shinyApp(ui, server)
+

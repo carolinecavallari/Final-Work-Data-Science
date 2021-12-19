@@ -9,26 +9,27 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-{r}
-# Creating a month_year column for the closures_df dataframe
+
 
 ```{r}
+##Wrangling School Closures DF
+
 sf <- stamp("02-2019", orders = "my") 
-
 closures_df$Date <- lubridate::dmy(closures_df$Date)
-
 closures_df <- closures_df %>%
-  mutate(month_year = sf(Date))
+    mutate(month_year = sf(Date)) %>%
+    filter(month_year != "02-2020")
+
+is.factor(closures_df$Status)
+table(closures_df$Status)
+closures_df$Status <- factor(closures_df$Status, levels = c("Closed due to COVID-19", "Partially open", "Fully open", "Academic break"))
+closures_df$test <- as.numeric(closures_df$Status)
+nfactor <- length(levels(closures_df$Status))
+foo <- brewer.pal(n = nfactor, name = "Set1")
+names(foo) <- levels(closures_df$Status)
 ```
  
 
-#school closure
-
-```{r}
-is.factor(closures_df$Status)
-table(closures_df$Status)
-closures_df$Status <- factor(closures_df$Status, levels = c("Closed due to COVID-19 ", "Partially open", "Fully open", "Academic break"))
-```
 
 
 ```{r}
@@ -190,6 +191,7 @@ closures_table_df <- select(complete_schools_df, c(country, region,
 
 ```
 
+<<<<<<< Updated upstream
 
 ```{r}
 #Data wrangling for schoool closure map
@@ -213,6 +215,8 @@ names(foo) <- levels(closures_df$Status)
 ```
 
 
+=======
+>>>>>>> Stashed changes
 ```{r}
 #functions for graphs
 
